@@ -1,0 +1,20 @@
+Package: cigarillo
+Title: Efficient manipulation of CIGAR strings
+Description: CIGAR stands for Concise Idiosyncratic Gapped Alignment Report.
+	The cigarillo package provides utility functions to parse CIGAR
+	strings, convert them into ranges of positions, and transform
+	aligned query or reference sequences based on the CIGAR strings that
+	describe how they align. These utility functions are rarely used
+	directly by the user but are typically used by higher-level packages
+	like Bioconductor packages GenomicAlignments and igblastr.
+biocViews: Infrastructure, DataRepresentation, Alignment, Sequencing
+URL: https://bioconductor.org/packages/cigarillo
+BugReports: https://github.com/Bioconductor/cigarillo/issues
+Version: 0.0.0
+License: Artistic-2.0
+Encoding: UTF-8
+Authors@R: person("Hervé", "Pagès", role=c("aut", "cre"),
+		  email="hpages.on.github@gmail.com",
+		  comment=c(ORCID="0009-0002-8272-4522"))
+Depends: methods, BiocGenerics, IRanges, Biostrings
+Imports: utils

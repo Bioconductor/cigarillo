@@ -1,0 +1,7 @@
+import(methods)
+import(utils)
+
+import(BiocGenerics)
+import(IRanges)
+import(Biostrings)
+
