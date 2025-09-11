@@ -17,9 +17,13 @@ BugReports: https://github.com/Bioconductor/cigarillo/issues
 Version: 0.0.1
 License: Artistic-2.0
 Encoding: UTF-8
-Authors@R: person("Hervé", "Pagès", role=c("aut", "cre"),
-		  email="hpages.on.github@gmail.com",
-		  comment=c(ORCID="0009-0002-8272-4522"))
+Authors@R: c(
+	person("Hervé", "Pagès", role=c("aut", "cre"),
+		email="hpages.on.github@gmail.com",
+		comment=c(ORCID="0009-0002-8272-4522")),
+	person("Valerie", "Obenchain", role="aut"),
+	person("Patrick", "Aboyoun", role="ctb"),
+	person("Fedor", "Bezrukov", role="ctb"))
 Depends: methods, BiocGenerics, S4Vectors, IRanges, Biostrings
 LinkingTo: S4Vectors, IRanges
 Collate:

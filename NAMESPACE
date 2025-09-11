@@ -12,7 +12,7 @@ export(
     CIGAR_OPS,
     validate_cigars,
     explode_cigar_ops, explode_cigar_oplens,
-    cigar_as_RleList,
+    cigars_as_RleList,
     tabulate_cigar_ops,
 
     ## cigar_extent.R:

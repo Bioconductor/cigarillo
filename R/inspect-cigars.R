@@ -1,5 +1,5 @@
 ### =========================================================================
-### Low-level CIGAR utilities
+### Inspect CIGAR strings
 ### -------------------------------------------------------------------------
 
 
@@ -53,7 +53,7 @@ explode_cigar_oplens <- function(cigars, ops=CIGAR_OPS)
     cigarillo.Call("C_explode_cigar_oplens", cigars, ops)
 }
 
-cigar_as_RleList <- function(cigars)
+cigars_as_RleList <- function(cigars)
 {
     cigar_ops <- explode_cigar_ops(cigars)
     cigar_op_lengths <- explode_cigar_oplens(cigars)

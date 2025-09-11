@@ -10,8 +10,8 @@ static char errmsg_buf[200];
  * C_trim_cigars_along_ref()
  */
 
-static const char *Lnarrow_cigar_string(SEXP cigar_string,
-		int *Lwidth, int *Loffset, int *rshift)
+static const char *Ltrim_along_ref(SEXP cigar_string,
+				   int *Lnpos, int *Loffset, int *rshift)
 {
 	const char *cig0;
 	int offset, n, OPL /* Operation Length */;
@@ -29,12 +29,12 @@ static const char *Lnarrow_cigar_string(SEXP cigar_string,
 		switch (OP) {
 		/* Alignment match (can be a sequence match or mismatch) */
 		    case 'M': case '=': case 'X':
-			if (*Lwidth < OPL) {
+			if (*Lnpos < OPL) {
 				*Loffset = offset;
-				*rshift += *Lwidth;
+				*rshift += *Lnpos;
 				return NULL;
 			}
-			*Lwidth -= OPL;
+			*Lnpos -= OPL;
 			*rshift += OPL;
 		    break;
 		/* Insertion to the reference or soft/hard clip on the read */
@@ -42,10 +42,10 @@ static const char *Lnarrow_cigar_string(SEXP cigar_string,
 		    break;
 		/* Deletion (or skipped region) from the reference */
 		    case 'D': case 'N':
-			if (*Lwidth < OPL)
-				*Lwidth = 0;
+			if (*Lnpos < OPL)
+				*Lnpos = 0;
 			else
-				*Lwidth -= OPL;
+				*Lnpos -= OPL;
 			*rshift += OPL;
 		    break;
 		/* Silent deletion from the padded reference */
@@ -59,12 +59,12 @@ static const char *Lnarrow_cigar_string(SEXP cigar_string,
 		offset += n;
 	}
 	snprintf(errmsg_buf, sizeof(errmsg_buf),
-		 "CIGAR is empty after narrowing");
+		 "CIGAR is empty after trimming");
 	return errmsg_buf;
 }
 
-static const char *Rnarrow_cigar_string(SEXP cigar_string,
-		int *Rwidth, int *Roffset)
+static const char *Rtrim_along_ref(SEXP cigar_string,
+				   int *Rnpos, int *Roffset)
 {
 	const char *cig0;
 	int offset, n, OPL /* Operation Length */;
@@ -83,21 +83,21 @@ static const char *Rnarrow_cigar_string(SEXP cigar_string,
 		switch (OP) {
 		/* Alignment match (can be a sequence match or mismatch) */
 		    case 'M': case '=': case 'X':
-			if (*Rwidth < OPL) {
+			if (*Rnpos < OPL) {
 				*Roffset = offset;
 				return NULL;
 			}
-			*Rwidth -= OPL;
+			*Rnpos -= OPL;
 		    break;
 		/* Insertion to the reference or soft/hard clip on the read */
 		    case 'I': case 'S': case 'H':
 		    break;
 		/* Deletion (or skipped region) from the reference */
 		    case 'D': case 'N':
-			if (*Rwidth < OPL)
-				*Rwidth = 0;
+			if (*Rnpos < OPL)
+				*Rnpos = 0;
 			else
-				*Rwidth -= OPL;
+				*Rnpos -= OPL;
 		    break;
 		/* Silent deletion from the padded reference */
 		    case 'P': break;
@@ -109,15 +109,15 @@ static const char *Rnarrow_cigar_string(SEXP cigar_string,
 		}
 	}
 	snprintf(errmsg_buf, sizeof(errmsg_buf),
-		 "CIGAR is empty after narrowing");
+		 "CIGAR is empty after trimming");
 	return errmsg_buf;
 }
 
 #define	CIGAR_BUF_LENGTH 250000
 
 /* FIXME: 'cigar_buf' is under the risk of a buffer overflow! */
-static const char *narrow_cigar_string(SEXP cigar_string,
-		int Lwidth, int Rwidth, char *cigar_buf, int *rshift)
+static const char *trim_along_ref(SEXP cigar_string,
+		int Lnpos, int Rnpos, char *cigar_buf, int *rshift)
 {
 	int Loffset, Roffset, buf_offset;
 	const char *cig0;
@@ -126,20 +126,19 @@ static const char *narrow_cigar_string(SEXP cigar_string,
 	const char *errmsg;
 	size_t size;
 
-	//Rprintf("narrow_cigar_string():\n");
-	errmsg = Lnarrow_cigar_string(cigar_string, &Lwidth, &Loffset,
-				      rshift);
+	//Rprintf("trim_along_ref():\n");
+	errmsg = Ltrim_along_ref(cigar_string, &Lnpos, &Loffset, rshift);
 	if (errmsg != NULL)
 		return errmsg;
-	//Rprintf("  Lwidth=%d Loffset=%d *rshift=%d\n",
-	//	Lwidth, Loffset, *rshift);
-	errmsg = Rnarrow_cigar_string(cigar_string, &Rwidth, &Roffset);
+	//Rprintf("  Lnpos=%d Loffset=%d *rshift=%d\n",
+	//	Lnpos, Loffset, *rshift);
+	errmsg = Rtrim_along_ref(cigar_string, &Rnpos, &Roffset);
 	if (errmsg != NULL)
 		return errmsg;
-	//Rprintf("  Rwidth=%d Roffset=%d\n", Rwidth, Roffset);
+	//Rprintf("  Rnpos=%d Roffset=%d\n", Rnpos, Roffset);
 	if (Roffset < Loffset) {
 		snprintf(errmsg_buf, sizeof(errmsg_buf),
-			 "CIGAR is empty after narrowing");
+			 "CIGAR is empty after trimming");
 		return errmsg_buf;
 	}
 	buf_offset = 0;
@@ -147,12 +146,12 @@ static const char *narrow_cigar_string(SEXP cigar_string,
 	for (offset = Loffset; offset <= Roffset; offset += n) {
 		n = _next_cigar_OP(cig0, offset, &OP, &OPL);
 		if (offset == Loffset)
-			OPL -= Lwidth;
+			OPL -= Lnpos;
 		if (offset == Roffset)
-			OPL -= Rwidth;
+			OPL -= Rnpos;
 		if (OPL <= 0) {
 			snprintf(errmsg_buf, sizeof(errmsg_buf),
-				 "CIGAR is empty after narrowing");
+				 "CIGAR is empty after trimming");
 			return errmsg_buf;
 		}
 		size = CIGAR_BUF_LENGTH - buf_offset;
@@ -185,7 +184,7 @@ SEXP C_trim_cigars_along_ref(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
 			INTEGER(ans_rshift)[i] = NA_INTEGER;
 			continue;
 		}
-		errmsg = narrow_cigar_string(cigar_string,
+		errmsg = trim_along_ref(cigar_string,
 				INTEGER(Lnpos)[i],
 				INTEGER(Rnpos)[i],
 				cigar_buf, INTEGER(ans_rshift) + i);
@@ -210,8 +209,8 @@ SEXP C_trim_cigars_along_ref(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
  * C_trim_cigars_along_query()
  */
 
-static const char *Lqnarrow_cigar_string(SEXP cigar_string,
-		int *Lqwidth, int *Loffset, int *rshift)
+static const char *Ltrim_along_query(SEXP cigar_string,
+				     int *Lnpos, int *Loffset, int *rshift)
 {
 	const char *cig0;
 	int offset, n, OPL /* Operation Length */;
@@ -229,21 +228,21 @@ static const char *Lqnarrow_cigar_string(SEXP cigar_string,
 		switch (OP) {
 		/* Alignment match (can be a sequence match or mismatch) */
 		    case 'M': case '=': case 'X':
-			if (*Lqwidth < OPL) {
+			if (*Lnpos < OPL) {
 				*Loffset = offset;
-				*rshift += *Lqwidth;
+				*rshift += *Lnpos;
 				return NULL;
 			}
-			*Lqwidth -= OPL;
+			*Lnpos -= OPL;
 			*rshift += OPL;
 		    break;
 		/* Insertion to the reference or soft/hard clip on the read */
 		    case 'I': case 'S': case 'H':
-			if (*Lqwidth < OPL) {
+			if (*Lnpos < OPL) {
 				*Loffset = offset;
 				return NULL;
 			}
-			*Lqwidth -= OPL;
+			*Lnpos -= OPL;
 		    break;
 		/* Deletion (or skipped region) from the reference */
 		    case 'D': case 'N':
@@ -260,12 +259,12 @@ static const char *Lqnarrow_cigar_string(SEXP cigar_string,
 		offset += n;
 	}
 	snprintf(errmsg_buf, sizeof(errmsg_buf),
-		 "CIGAR is empty after qnarrowing");
+		 "CIGAR is empty after trimming");
 	return errmsg_buf;
 }
 
-static const char *Rqnarrow_cigar_string(SEXP cigar_string,
-		int *Rqwidth, int *Roffset)
+static const char *Rtrim_along_query(SEXP cigar_string,
+				     int *Rnpos, int *Roffset)
 {
 	const char *cig0;
 	int offset, n, OPL /* Operation Length */;
@@ -284,11 +283,11 @@ static const char *Rqnarrow_cigar_string(SEXP cigar_string,
 		switch (OP) {
 		/* M, =, X, I, S, H */
 		    case 'M': case '=': case 'X': case 'I': case 'S': case 'H':
-			if (*Rqwidth < OPL) {
+			if (*Rnpos < OPL) {
 				*Roffset = offset;
 				return NULL;
 			}
-			*Rqwidth -= OPL;
+			*Rnpos -= OPL;
 		    break;
 		/* Deletion (or skipped region) from the reference,
 		   or silent deletion from the padded reference */
@@ -302,13 +301,13 @@ static const char *Rqnarrow_cigar_string(SEXP cigar_string,
 		}
 	}
 	snprintf(errmsg_buf, sizeof(errmsg_buf),
-		 "CIGAR is empty after qnarrowing");
+		 "CIGAR is empty after trimming");
 	return errmsg_buf;
 }
 
 /* FIXME: 'cigar_buf' is under the risk of a buffer overflow! */
-static const char *qnarrow_cigar_string(SEXP cigar_string,
-		int Lqwidth, int Rqwidth, char *cigar_buf, int *rshift)
+static const char *trim_along_query(SEXP cigar_string,
+		int Lnpos, int Rnpos, char *cigar_buf, int *rshift)
 {
 	int Loffset, Roffset, buf_offset;
 	const char *cig0;
@@ -317,20 +316,19 @@ static const char *qnarrow_cigar_string(SEXP cigar_string,
 	const char *errmsg;
 	size_t size;
 
-	//Rprintf("qnarrow_cigar_string():\n");
-	errmsg = Lqnarrow_cigar_string(cigar_string, &Lqwidth, &Loffset,
-				       rshift);
+	//Rprintf("trim_along_query():\n");
+	errmsg = Ltrim_along_query(cigar_string, &Lnpos, &Loffset, rshift);
 	if (errmsg != NULL)
 		return errmsg;
-	//Rprintf("  Lqwidth=%d Loffset=%d *rshift=%d\n",
-	//	Lqwidth, Loffset, *rshift);
-	errmsg = Rqnarrow_cigar_string(cigar_string, &Rqwidth, &Roffset);
+	//Rprintf("  Lnpos=%d Loffset=%d *rshift=%d\n",
+	//	Lnpos, Loffset, *rshift);
+	errmsg = Rtrim_along_query(cigar_string, &Rnpos, &Roffset);
 	if (errmsg != NULL)
 		return errmsg;
-	//Rprintf("  Rqwidth=%d Roffset=%d\n", Rqwidth, Roffset);
+	//Rprintf("  Rnpos=%d Roffset=%d\n", Rnpos, Roffset);
 	if (Roffset < Loffset) {
 		snprintf(errmsg_buf, sizeof(errmsg_buf),
-			 "CIGAR is empty after qnarrowing");
+			 "CIGAR is empty after trimming");
 		return errmsg_buf;
 	}
 	buf_offset = 0;
@@ -338,12 +336,12 @@ static const char *qnarrow_cigar_string(SEXP cigar_string,
 	for (offset = Loffset; offset <= Roffset; offset += n) {
 		n = _next_cigar_OP(cig0, offset, &OP, &OPL);
 		if (offset == Loffset)
-			OPL -= Lqwidth;
+			OPL -= Lnpos;
 		if (offset == Roffset)
-			OPL -= Rqwidth;
+			OPL -= Rnpos;
 		if (OPL <= 0) {
 			snprintf(errmsg_buf, sizeof(errmsg_buf),
-				 "CIGAR is empty after qnarrowing");
+				 "CIGAR is empty after trimming");
 			return errmsg_buf;
 		}
 		size = CIGAR_BUF_LENGTH - buf_offset;
@@ -360,10 +358,10 @@ static const char *qnarrow_cigar_string(SEXP cigar_string,
 
 /* --- .Call ENTRY POINT ---
    Return a list of 2 elements:
-     1. The narrowed cigar vector.
+     1. The vector of trimmed CIGARs.
      2. The 'rshift' vector i.e. the integer vector of the same length
         as 'cigars' that would need to be added to the 'lmmpos' field
-        of a SAM/BAM file as a consequence of this narrowing. */
+        of a SAM/BAM file as a consequence of this trimming. */
 SEXP C_trim_cigars_along_query(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
 {
 	SEXP ans, trimmed_cigars, trimmed_string, ans_rshift, cigar_string;
@@ -381,7 +379,7 @@ SEXP C_trim_cigars_along_query(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
 			INTEGER(ans_rshift)[i] = NA_INTEGER;
 			continue;
 		}
-		errmsg = qnarrow_cigar_string(cigar_string,
+		errmsg = trim_along_query(cigar_string,
 				INTEGER(Lnpos)[i],
 				INTEGER(Rnpos)[i],
 				cigar_buf, INTEGER(ans_rshift) + i);
