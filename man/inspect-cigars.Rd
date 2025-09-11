@@ -29,7 +29,7 @@ tabulate_cigar_ops(cigars)
 
 \arguments{
   \item{cigars}{
-    A character vector or factor containing the CIGAR strings.
+    A character vector or factor containing CIGAR strings.
   }
   \item{ops}{
     Character vector containing the CIGAR operations to consider.
@@ -73,6 +73,10 @@ tabulate_cigar_ops(cigars)
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
           the alignment that it describes.
+
+    \item \code{\link{trim_cigars_along_ref}} and
+          \code{\link{trim_cigars_along_query}} to trim CIGAR strings
+          along the "reference space" and "query space", respectively.
 
     \item The \link[IRanges]{RleList} class in the \pkg{IRanges} package.
   }

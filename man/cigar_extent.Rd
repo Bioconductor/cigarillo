@@ -47,7 +47,7 @@ cigar_extent_along_pwa(cigars, flags=NULL,
 
 \arguments{
   \item{cigars}{
-    A character vector or factor containing the CIGAR strings.
+    A character vector or factor containing CIGAR strings.
   }
   \item{flags}{
     \code{NULL} or an integer vector containing the SAM flag for
@@ -120,6 +120,10 @@ cigar_extent_along_pwa(cigars, flags=NULL,
   \itemize{
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
+
+    \item \code{\link{trim_cigars_along_ref}} and
+          \code{\link{trim_cigars_along_query}} to trim CIGAR strings
+          along the "reference space" and "query space", respectively.
   }
 }
 

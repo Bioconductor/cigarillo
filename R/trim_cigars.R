@@ -26,7 +26,7 @@ trim_cigars_along_ref <- function(cigars, Lnpos=0L, Rnpos=0L)
 {
     cigars <- normarg_cigars(cigars)
     Lnpos <- .normarg_npos(Lnpos, cigars, what="Lnpos")
-    Rnpos <- .normarg_npos(Lnpos, cigars, what="Rnpos")
+    Rnpos <- .normarg_npos(Rnpos, cigars, what="Rnpos")
     C_ans <- cigarillo.Call("C_trim_cigars_along_ref", cigars, Lnpos, Rnpos)
     ans <- C_ans[[1L]]
     attr(ans, "rshift") <- C_ans[[2L]]
@@ -37,7 +37,7 @@ trim_cigars_along_query <- function(cigars, Lnpos=0L, Rnpos=0L)
 {
     cigars <- normarg_cigars(cigars)
     Lnpos <- .normarg_npos(Lnpos, cigars, what="Lnpos")
-    Rnpos <- .normarg_npos(Lnpos, cigars, what="Rnpos")
+    Rnpos <- .normarg_npos(Rnpos, cigars, what="Rnpos")
     C_ans <- cigarillo.Call("C_trim_cigars_along_query", cigars, Lnpos, Rnpos)
     ans <- C_ans[[1L]]
     attr(ans, "rshift") <- C_ans[[2L]]
