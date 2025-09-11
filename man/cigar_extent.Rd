@@ -61,34 +61,39 @@ cigar_extent_along_pwa(cigars, flags=NULL,
   }
   \item{N.regions.removed}{
     \code{TRUE} or \code{FALSE}.
+
     If \code{TRUE}, then \code{cigar_extent_along_ref} reports the CIGAR
     extents with respect to the "reference space" from which the N regions
     have been removed, and \code{cigar_extent_along_pwa} reports them with
-    respect to the "pairwise alignment space" from which the N regions have
-    been removed.
+    respect to the "pairwise alignment space" from which the N regions
+    have been removed.
   }
   \item{before.hard.clipping}{
     \code{TRUE} or \code{FALSE}.
+
     If \code{TRUE}, then \code{cigar_extent_along_query} reports the CIGAR
-    extents with respect to the "query space" to which the H regions have
-    been added.
-    \code{before.hard.clipping} and \code{after.soft.clipping} cannot
-    both be \code{TRUE}.
+    extents with respect to the "query space" to which the H regions
+    have been added.
+    Note that \code{before.hard.clipping} and \code{after.soft.clipping}
+    cannot both be \code{TRUE}.
   }
   \item{after.soft.clipping}{
     \code{TRUE} or \code{FALSE}.
+
     If \code{TRUE}, then \code{cigar_extent_along_query} reports the CIGAR
     extents with respect to the "query space" from which the S regions
     have been removed.
-    \code{before.hard.clipping} and \code{after.soft.clipping} cannot
-    both be \code{TRUE}.
+    Note that \code{before.hard.clipping} and \code{after.soft.clipping}
+    cannot both be \code{TRUE}.
   }
   \item{dense}{
     \code{TRUE} or \code{FALSE}.
+
     If \code{TRUE}, then \code{cigar_extent_along_pwa} reports the CIGAR
     extents with respect to the "pairwise alignment space" from which
     the I, D, and N regions have been removed.
-    \code{N.regions.removed} and \code{dense} cannot both be \code{TRUE}.
+    Note that \code{N.regions.removed} and \code{dense} cannot both
+    be \code{TRUE}.
   }
 }
 
@@ -124,22 +129,26 @@ cigar_extent_along_pwa(cigars, flags=NULL,
     \item \code{\link{trim_cigars_along_ref}} and
           \code{\link{trim_cigars_along_query}} to trim CIGAR strings
           along the "reference space" and "query space", respectively.
+
+    \item \link{cigars_as_ranges} for turning CIGAR strings into ranges
+          of positions.
   }
 }
 
 \examples{
-cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S", "2S10M2000N15M", "3H33M5H")
+my_cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S",
+               "2S10M2000N15M", "3H33M5H")
 
 ## Extents along the "reference space":
-cigar_extent_along_ref(cigars)
+cigar_extent_along_ref(my_cigars)
 
 ## Extents along the "query space":
-cigar_extent_along_query(cigars)
-cigar_extent_along_query(cigars, before.hard.clipping=TRUE)
+cigar_extent_along_query(my_cigars)
+cigar_extent_along_query(my_cigars, before.hard.clipping=TRUE)
 
 ## Extents along the "pairwise alignment space":
-cigar_extent_along_pwa(cigars)
-cigar_extent_along_pwa(cigars, dense=TRUE)
+cigar_extent_along_pwa(my_cigars)
+cigar_extent_along_pwa(my_cigars, dense=TRUE)
 }
 
 \keyword{manip}

@@ -1,5 +1,5 @@
 ### =========================================================================
-### From CIGARs to ranges
+### Turn CIGAR strings into ranges of positions
 ### -------------------------------------------------------------------------
 
 
@@ -31,10 +31,9 @@
                    ops, drop.empty.ranges, reduce.ranges, with.ops)
 }
 
-cigar_as_ranges_along_ref <-
+cigars_as_ranges_along_ref <-
     function(cigars, flags=NULL,
-             N.regions.removed=FALSE,
-             lmmpos=1L, f=NULL,
+             N.regions.removed=FALSE, lmmpos=1L, f=NULL,
              ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
              with.ops=FALSE)
 {
@@ -47,7 +46,7 @@ cigar_as_ranges_along_ref <-
     IRangesList(C_ans, compress=compress)
 }
 
-cigar_as_ranges_along_query <-
+cigars_as_ranges_along_query <-
     function(cigars, flags=NULL,
              before.hard.clipping=FALSE, after.soft.clipping=FALSE,
              ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
@@ -58,7 +57,7 @@ cigar_as_ranges_along_query <-
                       ops, drop.empty.ranges, reduce.ranges, with.ops)
 }
 
-cigar_as_ranges_along_pwa <-
+cigars_as_ranges_along_pwa <-
     function(cigars, flags=NULL,
              N.regions.removed=FALSE, dense=FALSE,
              ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,

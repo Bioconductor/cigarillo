@@ -87,22 +87,23 @@ tabulate_cigar_ops(cigars)
 CIGAR_OPS
 
 ## Turn CIGAR strings into other useful representations:
-cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S", "2S10M2000N15M", "3H33M5H")
+my_cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S",
+               "2S10M2000N15M", "3H33M5H")
 
-explode_cigar_ops(cigars)
-explode_cigar_oplens(cigars)
+explode_cigar_ops(my_cigars)
+explode_cigar_oplens(my_cigars)
 
-explode_cigar_ops(cigars, ops=c("I", "S"))
-explode_cigar_oplens(cigars, ops=c("I", "S"))
+explode_cigar_ops(my_cigars, ops=c("I", "S"))
+explode_cigar_oplens(my_cigars, ops=c("I", "S"))
 
-cigars_as_RleList(cigars)
+cigars_as_RleList(my_cigars)
 
 ## The RleList object returned by cigars_as_RleList() can be coerced
 ## to CharacterList:
-as(cigars_as_RleList(cigars), "CharacterList")
+as(cigars_as_RleList(my_cigars), "CharacterList")
 
 ## Tabulate CIGAR operations:
-tabulate_cigar_ops(cigars)
+tabulate_cigar_ops(my_cigars)
 }
 
 \keyword{manip}
