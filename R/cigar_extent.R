@@ -1,0 +1,106 @@
+### =========================================================================
+### Extent of a CIGAR = nb of positions it spans
+### -------------------------------------------------------------------------
+
+
+normarg_flags <- function(flags, cigars)
+{
+    if (!is.null(flags)) {
+        if (!is.numeric(flags))
+            stop("'flags' must be NULL or a vector of integers")
+        if (!is.integer(flags))
+            flags <- as.integer(flags)
+        if (length(cigars) != length(flags))
+            stop("'cigars' and 'flags' must have the same length")
+    }
+    flags
+}
+
+select_reference_space <- function(N.regions.removed)
+{
+    if (!isTRUEorFALSE(N.regions.removed))
+        stop("'N.regions.removed' must be TRUE or FALSE")
+    if (N.regions.removed) {
+        space <- 2L  # REFERENCE_N_REGIONS_REMOVED
+    } else {
+        space <- 1L  # REFERENCE
+    }
+    space
+}
+
+select_query_space <- function(before.hard.clipping, after.soft.clipping)
+{
+    if (!isTRUEorFALSE(before.hard.clipping))
+        stop("'before.hard.clipping' must be TRUE or FALSE")
+    if (!isTRUEorFALSE(after.soft.clipping))
+        stop("'after.soft.clipping' must be TRUE or FALSE")
+    if (before.hard.clipping) {
+        if (after.soft.clipping)
+            stop("'before.hard.clipping' and 'after.soft.clipping' ",
+                 "cannot both be TRUE")
+        space <- 4L  # QUERY_BEFORE_HARD_CLIPPING
+    } else if (after.soft.clipping) {
+        space <- 5L  # QUERY_AFTER_SOFT_CLIPPING
+    } else {
+        space <- 3L  # QUERY
+    }
+    space
+}
+
+select_pairwise_space <- function(N.regions.removed, dense)
+{
+    if (!isTRUEorFALSE(N.regions.removed))
+        stop("'N.regions.removed' must be TRUE or FALSE")
+    if (!isTRUEorFALSE(dense))
+        stop("'dense' must be TRUE or FALSE")
+    if (N.regions.removed) {
+        if (dense)
+           stop("'N.regions.removed' and 'dense' ",
+                "cannot both be TRUE")
+        space <- 7L  # PAIRWISE_N_REGIONS_REMOVED
+    } else if (dense) {
+        space <- 8L  # PAIRWISE_DENSE
+    } else {
+        space <- 6L  # PAIRWISE
+    }
+    space
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### From CIGARs to sequence lengths
+###
+
+.cigar_extent <- function(cigars, flags, space)
+{
+    cigars <- normarg_cigars(cigars)
+    flags <- normarg_flags(flags, cigars)
+    if (!isSingleNumber(space))
+        stop("'space' must be a single integer")
+    if (!is.integer(space))
+        space <- as.integer(space)
+    cigarillo.Call("C_cigar_extent", cigars, flags, space)
+}
+
+cigar_extent_along_ref <- function(cigars, flags=NULL,
+                                   N.regions.removed=FALSE)
+{
+    space <- select_reference_space(N.regions.removed)
+    .cigar_extent(cigars, flags, space)
+}
+
+cigar_extent_along_query <- function(cigars, flags=NULL,
+                                     before.hard.clipping=FALSE,
+                                     after.soft.clipping=FALSE)
+{
+    space <- select_query_space(before.hard.clipping, after.soft.clipping)
+    .cigar_extent(cigars, flags, space)
+}
+
+cigar_extent_along_pwa <- function(cigars, flags=NULL,
+                                   N.regions.removed=FALSE, dense=FALSE)
+{
+    space <- select_pairwise_space(N.regions.removed, dense)
+    .cigar_extent(cigars, flags, space)
+}
+

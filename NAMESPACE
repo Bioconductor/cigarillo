@@ -1,7 +1,43 @@
+useDynLib(cigarillo)
+
 import(methods)
-import(utils)
 
 import(BiocGenerics)
+import(S4Vectors)
 import(IRanges)
 import(Biostrings)
+
+export(
+    ## inspect-cigars.R:
+    CIGAR_OPS,
+    validate_cigars,
+    explode_cigar_ops, explode_cigar_oplens,
+    cigar_as_RleList,
+    tabulate_cigar_ops,
+
+    ## cigar_extent.R:
+    cigar_extent_along_ref,
+    cigar_extent_along_query,
+    cigar_extent_along_pwa,
+
+    ## trim_cigars.R:
+    trim_cigars_along_ref,
+    trim_cigars_along_query,
+    narrow_cigars_along_ref,
+    narrow_cigars_along_query,
+
+    ## cigars_as_ranges.R:
+    cigar_as_ranges_along_ref,
+    cigar_as_ranges_along_query,
+    cigar_as_ranges_along_pwa,
+
+    ## coordinate-mapping.R:
+    query_locs_to_ref_locs,
+    ref_locs_to_query_locs,
+    map_query_locs_to_ref_locs,
+    map_ref_locs_to_query_locs
+
+    ## sequenceLayer.R:
+
+)
 

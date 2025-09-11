@@ -1,0 +1,128 @@
+#include "cigar_extent.h"
+
+#include "inspect_cigars.h"
+
+
+/* The 8 supported spaces. */
+#define REFERENCE                       1
+#define REFERENCE_N_REGIONS_REMOVED     2
+#define QUERY                           3
+#define QUERY_BEFORE_HARD_CLIPPING      4
+#define QUERY_AFTER_SOFT_CLIPPING       5
+#define PAIRWISE                        6
+#define PAIRWISE_N_REGIONS_REMOVED      7
+#define PAIRWISE_DENSE                  8
+
+
+int _is_visible_in_space(char OP, int space)
+{
+	if (OP == 'M')
+		return 1;
+	switch (space) {
+	case QUERY_BEFORE_HARD_CLIPPING:
+		if (OP == 'H')
+			return 1;
+		/* fall through */
+	case QUERY:
+		if (OP == 'S')
+			return 1;
+		/* fall through */
+	case QUERY_AFTER_SOFT_CLIPPING:
+		if (OP == 'I')
+			return 1;
+		break;
+	case PAIRWISE:
+		if (OP == 'I')
+			return 1;
+		/* fall through */
+	case REFERENCE:
+		if (OP == 'D' || OP == 'N')
+			return 1;
+		break;
+	case PAIRWISE_N_REGIONS_REMOVED:
+		if (OP == 'I')
+			return 1;
+		/* fall through */
+	case REFERENCE_N_REGIONS_REMOVED:
+		if (OP == 'D')
+			return 1;
+	}
+	if (OP == '=' || OP == 'X')
+		return 1;
+	return 0;
+}
+
+static const char *compute_cigar_extent(const char *cigar_string, int space,
+		int *extent)
+{
+	int x, cigar_offset, n, OPL /* Operation Length */;
+	char OP /* Operation */;
+
+	x = cigar_offset = 0;
+	while ((n = _next_cigar_OP(cigar_string, cigar_offset, &OP, &OPL))) {
+		if (n == -1)
+			return _get_cigar_parsing_error();
+		if (_is_visible_in_space(OP, space))
+			x += OPL;
+		cigar_offset += n;
+	}
+	*extent = x;
+	return NULL;
+}
+
+
+/****************************************************************************
+ * C_cigar_extent()
+ */
+
+/* --- .Call ENTRY POINT ---
+   Args:
+   cigar, flag, space: see C_cigars_as_ranges() function above.
+   Return an integer vector of the same length as 'cigar' containing the
+   extents of the alignments as inferred from the cigar information. */
+SEXP C_cigar_extent(SEXP cigar, SEXP flag, SEXP space)
+{
+	SEXP ans, cigar_elt;
+	int cigar_len, space0, i, *ans_elt;
+	const int *flag_elt;
+	const char *cigar_string, *errmsg;
+
+	cigar_len = LENGTH(cigar);
+	if (flag != R_NilValue)
+		flag_elt = INTEGER(flag);
+	space0 = INTEGER(space)[0];
+	PROTECT(ans = NEW_INTEGER(cigar_len));
+	for (i = 0, ans_elt = INTEGER(ans); i < cigar_len; i++, ans_elt++) {
+		if (flag != R_NilValue) {
+			if (*flag_elt == NA_INTEGER) {
+				UNPROTECT(1);
+				error("'flag' contains NAs");
+			}
+			if (*flag_elt & 0x004) {
+				*ans_elt = NA_INTEGER;
+				goto for_tail;
+			}
+		}
+		cigar_elt = STRING_ELT(cigar, i);
+		if (cigar_elt == NA_STRING) {
+			*ans_elt = NA_INTEGER;
+			goto for_tail;
+		}
+		cigar_string = CHAR(cigar_elt);
+		if (strcmp(cigar_string, "*") == 0) {
+			*ans_elt = NA_INTEGER;
+			goto for_tail;
+		}
+		errmsg = compute_cigar_extent(cigar_string, space0, ans_elt);
+		if (errmsg != NULL) {
+			UNPROTECT(1);
+			error("in 'cigar[%d]': %s", i + 1, errmsg);
+		}
+for_tail:
+		if (flag != R_NilValue)
+			flag_elt++;
+	}
+	UNPROTECT(1);
+	return ans;
+}
+

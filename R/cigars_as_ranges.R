@@ -1,0 +1,71 @@
+### =========================================================================
+### From CIGARs to ranges
+### -------------------------------------------------------------------------
+
+
+.cigars_as_ranges <- function(cigars, flags, space, lmmpos, f,
+                              ops, drop.empty.ranges, reduce.ranges, with.ops)
+{
+    cigars <- normarg_cigars(cigars)
+    flags <- normarg_flags(flags, cigars)
+    if (!isSingleNumber(space))
+        stop("'space' must be a single integer")
+    if (!is.integer(space))
+        space <- as.integer(space)
+    lmmpos <- normarg_lmmpos(lmmpos, cigars)
+    if (!is.null(f)) {
+        if (!is.factor(f))
+            stop("'f' must be NULL or a factor")
+        if (length(f) != length(cigars))
+            stop("'f' must have the same length as 'cigars'")
+    }
+    ops <- normarg_ops(ops)
+    if (!isTRUEorFALSE(drop.empty.ranges))
+        stop("'drop.empty.ranges' must be TRUE or FALSE")
+    if (!isTRUEorFALSE(reduce.ranges))
+        stop("'reduce.ranges' must be TRUE or FALSE")
+    if (!isTRUEorFALSE(with.ops))
+        stop("'with.ops' must be TRUE or FALSE")
+    cigarillo.Call("C_cigars_as_ranges",
+                   cigars, flags, space, lmmpos, f,
+                   ops, drop.empty.ranges, reduce.ranges, with.ops)
+}
+
+cigar_as_ranges_along_ref <-
+    function(cigars, flags=NULL,
+             N.regions.removed=FALSE,
+             lmmpos=1L, f=NULL,
+             ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
+             with.ops=FALSE)
+{
+    space <- select_reference_space(N.regions.removed)
+    C_ans <- .cigars_as_ranges(cigars, flags, space, lmmpos, f,
+                               ops, drop.empty.ranges, reduce.ranges, with.ops)
+    if (is.null(f))
+        return(C_ans)
+    compress <- length(C_ans) >= 200L
+    IRangesList(C_ans, compress=compress)
+}
+
+cigar_as_ranges_along_query <-
+    function(cigars, flags=NULL,
+             before.hard.clipping=FALSE, after.soft.clipping=FALSE,
+             ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
+             with.ops=FALSE)
+{
+    space <- select_query_space(before.hard.clipping, after.soft.clipping)
+    .cigars_as_ranges(cigars, flags, space, 1L, NULL,
+                      ops, drop.empty.ranges, reduce.ranges, with.ops)
+}
+
+cigar_as_ranges_along_pwa <-
+    function(cigars, flags=NULL,
+             N.regions.removed=FALSE, dense=FALSE,
+             ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
+             with.ops=FALSE)
+{
+    space <- select_pairwise_space(N.regions.removed, dense)
+    .cigars_as_ranges(cigars, flags, space, 1L, NULL,
+                      ops, drop.empty.ranges, reduce.ranges, with.ops)
+}
+
