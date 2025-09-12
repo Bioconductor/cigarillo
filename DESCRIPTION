@@ -14,7 +14,7 @@ Description: CIGAR stands for Concise Idiosyncratic Gapped Alignment Report.
 biocViews: Infrastructure, Alignment, Sequencing, DataRepresentation
 URL: https://bioconductor.org/packages/cigarillo
 BugReports: https://github.com/Bioconductor/cigarillo/issues
-Version: 0.0.1
+Version: 0.0.2
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(
@@ -22,8 +22,11 @@ Authors@R: c(
 		email="hpages.on.github@gmail.com",
 		comment=c(ORCID="0009-0002-8272-4522")),
 	person("Valerie", "Obenchain", role="aut"),
+	person("Michael", "Lawrence", role="aut",
+		email="lawremi@gmail.com"),
 	person("Patrick", "Aboyoun", role="ctb"),
-	person("Fedor", "Bezrukov", role="ctb"))
+	person("Fedor", "Bezrukov", role="ctb"),
+	person("Martin", "Morgan", role="ctb"))
 Depends: methods, BiocGenerics, S4Vectors, IRanges, Biostrings
 LinkingTo: S4Vectors, IRanges
 Collate:
@@ -32,4 +35,5 @@ Collate:
 	cigar_extent.R
 	trim_cigars.R
 	cigars_as_ranges.R
-	coordinate-mapping.R
+	position-mapping.R
+	map_ref_ranges_to_query.R

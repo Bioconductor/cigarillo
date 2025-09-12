@@ -31,11 +31,12 @@ export(
     cigars_as_ranges_along_query,
     cigars_as_ranges_along_pwa,
 
-    ## coordinate-mapping.R:
-    query_locs_to_ref_locs,
-    ref_locs_to_query_locs,
-    map_query_locs_to_ref_locs,
-    map_ref_locs_to_query_locs
+    ## position-mapping.R:
+    query_pos_as_ref_pos,
+    ref_pos_as_query_pos,
+
+    ## map_ref_ranges_to_query.R:
+    map_ref_ranges_to_query
 
     ## sequenceLayer.R:
 

@@ -66,7 +66,7 @@ tabulate_cigar_ops(cigars)
   CIGAR operation.
 }
 
-\author{Hervé Pagès & P. Aboyoun}
+\author{Hervé Pagès, Martin Morgan, and Patrick Aboyoun}
 
 \seealso{
   \itemize{
