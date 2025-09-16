@@ -1,5 +1,5 @@
-#ifndef _POSITION_MAPPING_H_
-#define _POSITION_MAPPING_H_
+#ifndef _PROJECT_POSITIONS_H_
+#define _PROJECT_POSITIONS_H_
 
 #include <Rdefines.h>
 
@@ -31,5 +31,5 @@ SEXP C_ref_pos_as_query_pos(
 	SEXP narrow_left
 );
 
-#endif  /* _POSITION_MAPPING_H_ */
+#endif  /* _PROJECT_POSITIONS_H_ */
 

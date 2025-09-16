@@ -78,6 +78,12 @@ tabulate_cigar_ops(cigars)
           \code{\link{trim_cigars_along_query}} to trim CIGAR strings
           along the "reference space" and "query space", respectively.
 
+    \item \link{cigars_as_ranges} for turning CIGAR strings into ranges
+          of positions.
+
+    \item \link{project_positions} to project positions from query to
+          reference space and vice versa.
+
     \item The \link[IRanges]{RleList} class in the \pkg{IRanges} package.
   }
 }

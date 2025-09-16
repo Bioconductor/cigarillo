@@ -132,6 +132,9 @@ cigar_extent_along_pwa(cigars, flags=NULL,
 
     \item \link{cigars_as_ranges} for turning CIGAR strings into ranges
           of positions.
+
+    \item \link{project_positions} to project positions from query to
+          reference space and vice versa.
   }
 }
 

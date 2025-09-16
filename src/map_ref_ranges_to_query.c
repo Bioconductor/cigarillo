@@ -2,7 +2,7 @@
 
 #include "S4Vectors_interface.h"
 
-#include "position_mapping.h"
+#include "project_positions.h"
 
 
 /*
@@ -12,8 +12,9 @@
  *
  * Note that the current implementation uses nested for loops to find all
  * the hits between the input ranges and cigar/lmmpos pairs, which is very
- * inefficient. A more efficient approach would be to use findOverlaps() to
- * find the hits.
+ * inefficient.
+ * See fast_map_ref_ranges_to_query() in R/map_ref_ranges_to_query.R for a
+ * more efficient approach based on findOverlaps().
  */
 
 
@@ -27,8 +28,8 @@
  * ranges and the cigar/lmmpos pairs. All list elements are parallel integer
  * vectors of length N, where N is the number of hits.
  * The four list elements are:
- *   1. start of reference range reported with respect to query space
- *   2. end of reference range reported with respect to query space
+ *   1. start of reference range relative to query space
+ *   2. end of reference range relative to query space
  *   3. index of input range involved in hit
  *   4. index of cigar/lmmpos pair involved in hit
  * Note that an input range is considered to have a hit with a cigar/lmmpos

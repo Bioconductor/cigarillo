@@ -31,12 +31,13 @@ export(
     cigars_as_ranges_along_query,
     cigars_as_ranges_along_pwa,
 
-    ## position-mapping.R:
+    ## project-positions.R:
     query_pos_as_ref_pos,
     ref_pos_as_query_pos,
 
     ## map_ref_ranges_to_query.R:
-    map_ref_ranges_to_query
+    map_ref_ranges_to_query,
+    fast_map_ref_ranges_to_query
 
     ## sequenceLayer.R:
 

@@ -91,6 +91,12 @@ narrow_cigars_along_query(cigars, start=NA, end=NA, width=NA)
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
           the alignment that it describes.
+
+    \item \link{cigars_as_ranges} for turning CIGAR strings into ranges
+          of positions.
+
+    \item \link{project_positions} to project positions from query to
+          reference space and vice versa.
   }
 }
 

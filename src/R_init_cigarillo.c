@@ -4,7 +4,7 @@
 #include "cigar_extent.h"
 #include "trim_cigars.h"
 #include "cigars_as_ranges.h"
-#include "position_mapping.h"
+#include "project_positions.h"
 #include "map_ref_ranges_to_query.h"
 
 #define CALLMETHOD_DEF(fun, numArgs) {#fun, (DL_FUNC) &fun, numArgs}
@@ -27,7 +27,7 @@ static const R_CallMethodDef callMethods[] = {
 /* cigars_as_ranges.c */
 	CALLMETHOD_DEF(C_cigars_as_ranges, 9),
 
-/* position_mapping.c */
+/* project_positions.c */
 	CALLMETHOD_DEF(C_query_pos_as_ref_pos, 4),
 	CALLMETHOD_DEF(C_ref_pos_as_query_pos, 4),
 

@@ -1,0 +1,13 @@
+- Once cigarillo is in Bioconductor:
+
+    o Deprecate all CIGAR utility functions defined in GenomicAlignments in
+      favor of the new CIGAR utility functions defined in cigarillo.
+
+    o Modify the code in GenomicAlignments/R/coordinate-mapping-methods.R
+      to use query_pos_as_ref_pos(), ref_pos_as_query_pos(), and
+      fast_map_ref_ranges_to_query().
+      In particular GenomicAlignments:::.mapToAlignments() should use
+      fast_map_ref_ranges_to_query() instead of very inefficient .Call
+      entry point "map_ref_locs_to_query_locs" defined in GenomicAlignments.
+      Then GenomicAlignments/src/coordinate_mapping_methods.c can go away.
+
