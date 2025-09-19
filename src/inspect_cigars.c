@@ -357,9 +357,11 @@ static const char *cigar_string_op_table(SEXP cigar_string, const char *allOPs,
  */
 SEXP C_tabulate_cigar_ops(SEXP cigar)
 {
+	static const char *allOPs = "MIDNSHP=X";
+
 	SEXP cigar_string, ans, ans_dimnames, ans_colnames;
 	int cigar_len, allOPs_len, i, j, *ans_row;
-	const char *allOPs = "MIDNSHP=X", *errmsg;
+	const char *errmsg;
 	char OPstrbuf[2];
 
 	cigar_len = LENGTH(cigar);

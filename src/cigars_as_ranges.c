@@ -3,8 +3,8 @@
 #include "IRanges_interface.h"
 #include "S4Vectors_interface.h"
 
+#include "cigar_ops_visibility.h"
 #include "inspect_cigars.h"
-#include "cigar_extent.h"
 
 #include <string.h>  /* for memcpy */
 
@@ -147,7 +147,7 @@ static const char *parse_cigar_ranges(const char *cigar_string,
 	while ((n = _next_cigar_OP(cigar_string, cigar_offset, &OP, &OPL))) {
 		if (n == -1)
 			return _get_cigar_parsing_error();
-		int width = _is_visible_in_space(OP, space) ? OPL : 0;
+		int width = _op_is_visible(OP, space) ? OPL : 0;
 		if (_is_in_ops(OP))
 			drop_or_append_or_merge_range(start, width,
 						      drop_empty_ranges,

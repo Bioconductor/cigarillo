@@ -38,9 +38,10 @@ project_sequences(x, cigars, from="query", to="reference",
     containing CIGAR strings.
   }
   \item{from, to}{
-    A single string specifying one of the 8 supported spaces listed in the
-    Details section below. \code{from} must be the current space (i.e. the
-    space that the sequences in \code{x} belong to) and \code{to} is the
+    A single string specifying one of the 8 supported "projection spaces".
+    See \code{?\link{cigar_ops_visibility}} for more information.
+    \code{from} must be the current space (i.e. the space that
+    the sequences in \code{x} belong to) and \code{to} is the
     space onto which the sequences in \code{x} must be projected.
   }
   \item{I.letter, D.letter, N.letter, S.letter, H.letter}{
@@ -50,41 +51,6 @@ project_sequences(x, cigars, from="query", to="reference",
 }
 
 \details{
-  The 8 supported spaces are: "reference", "reference-N-regions-removed",
-  "query", "query-before-hard-clipping", "query-after-soft-clipping",
-  "pairwise", "pairwise-N-regions-removed", and "pairwise-dense".
-
-  Each space can be characterized by the extended CIGAR
-  operations that are \emph{visible} in it. A CIGAR operation is
-  said to be \emph{visible} in a given space if it "runs along it",
-  that is, if it's associated with a block of contiguous positions in
-  that space (the size of the block being the length of the operation).
-  For example, the M/=/X operations are \emph{visible} in all spaces,
-  the D/N operations are \emph{visible} in the "reference" space
-  but not in the "query" space, the S operation is \emph{visible}
-  in the "query" space but not in the "reference" or in
-  the "query-after-soft-clipping" space, etc...
-
-  Here are the extended CIGAR operations that are \emph{visible}
-  in each space:
-  \enumerate{
-    \item reference: M, D, N, =, X
-
-    \item reference-N-regions-removed: M, D, =, X
-
-    \item query: M, I, S, =, X
-
-    \item query-before-hard-clipping: M, I, S, H, =, X
-
-    \item query-after-soft-clipping: M, I, =, X
-
-    \item pairwise: M, I, D, N, =, X
-
-    \item pairwise-N-regions-removed: M, I, D, =, X
-
-    \item pairwise-dense: M, =, X
-  }
-
   \code{project_sequences} projects a sequence that belongs to one space
   onto another by (1) removing the substrings associated with operations
   that are no longer \emph{visible} in the new space, and (2) injecting
@@ -112,6 +78,9 @@ project_sequences(x, cigars, from="query", to="reference",
 
 \seealso{
   \itemize{
+    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+          operations and their visibility in various "projection spaces".
+
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
 

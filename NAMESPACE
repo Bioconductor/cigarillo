@@ -9,8 +9,11 @@ import(IRanges)
 import(Biostrings)
 
 export(
-    ## inspect-cigars.R:
+    ## cigar_ops_visibility.R:
     CIGAR_OPS,
+    cigar_ops_visibility,
+
+    ## inspect-cigars.R:
     validate_cigars,
     explode_cigar_ops, explode_cigar_oplens,
     cigars_as_RleList,

@@ -87,6 +87,9 @@ ref_pos_as_query_pos(ref_pos, cigars, lmmpos, narrow.left)
 
 \seealso{
   \itemize{
+    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+          operations and their visibility in various "projection spaces".
+
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
 

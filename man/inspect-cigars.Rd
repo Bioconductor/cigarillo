@@ -5,7 +5,6 @@
 
 \alias{validate_cigars}
 
-\alias{CIGAR_OPS}
 \alias{explode_cigar_ops}
 \alias{explode_cigar_oplens}
 \alias{cigars_as_RleList}
@@ -18,8 +17,6 @@
 }
 
 \usage{
-CIGAR_OPS
-
 explode_cigar_ops(cigars, ops=CIGAR_OPS)
 explode_cigar_oplens(cigars, ops=CIGAR_OPS)
 cigars_as_RleList(cigars)
@@ -32,21 +29,17 @@ tabulate_cigar_ops(cigars)
     A character vector or factor containing CIGAR strings.
   }
   \item{ops}{
-    Character vector containing the CIGAR operations to consider.
-    This must be a subset of \code{CIGAR_OPS}. \code{explode_cigar_ops()}
-    and \code{explode_cigar_oplens()} will ignore operations not listed
-    in \code{ops} (in addition to 0-length operations which are always
-    ignored).
+    Character vector where the elements are single letters representing
+    valid CIGAR operations. Must be a subset of \code{\link{CIGAR_OPS}}.
+    See \code{?\link{CIGAR_OPS}} for more information.
+
+    \code{explode_cigar_ops()} and \code{explode_cigar_oplens()} will
+    ignore operations not listed in \code{ops} (in addition to 0-length
+    operations which are always ignored).
   }
 }
 
 \value{
-  \code{CIGAR_OPS} is a predefined character vector containing the valid
-  (extended) CIGAR operations: M, I, D, N, S, H, P, =, X.
-  See official SAM/BAM Format specs at
-  \url{https://samtools.github.io/hts-specs/SAMv1.pdf} for the list of
-  extended CIGAR operations and their meaning.
-
   For \code{explode_cigar_ops} and \code{explode_cigar_oplens}:
   Both functions return a list of the same length as \code{cigars} where
   each list element is a character vector (for \code{explode_cigar_ops})
@@ -70,6 +63,9 @@ tabulate_cigar_ops(cigars)
 
 \seealso{
   \itemize{
+    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+          operations and their visibility in various "projection spaces".
+
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
           the alignment that it describes.
@@ -92,9 +88,6 @@ tabulate_cigar_ops(cigars)
 }
 
 \examples{
-## Valid CIGAR operations:
-CIGAR_OPS
-
 ## Turn CIGAR strings into other useful representations:
 my_cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S",
                "2S10M2000N15M", "3H33M5H")

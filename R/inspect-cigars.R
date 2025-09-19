@@ -3,31 +3,6 @@
 ### -------------------------------------------------------------------------
 
 
-### See p. 4 of the SAM Spec v1.4 at http://samtools.sourceforge.net/ for the
-### list of CIGAR operations and their meanings.
-CIGAR_OPS <- c("M", "I", "D", "N", "S", "H", "P", "=", "X")
-
-normarg_ops <- function(ops)
-{
-    if (is.null(ops))
-        return(ops)
-    if (!is.character(ops))
-        stop("'ops' must be a character vector")
-    if (any(is.na(ops)))
-        stop("'ops' cannot contain NAs")
-    if (length(ops) == 1L) {
-        ops <- strsplit(ops, NULL, fixed=TRUE)[[1L]]
-    } else if (any(nchar(ops) != 1L)) {
-        stop("when 'length(ops) != 1', all its elements ",
-             "must be single letters")
-    }
-    if (anyDuplicated(ops))
-        stop("'ops' cannot contain duplicated letters")
-    if (!all(ops %in% CIGAR_OPS))
-        stop("'ops' contains invalid CIGAR operations")
-    ops
-}
-
 validate_cigars <- function(cigars)
 {
     cigars <- normarg_cigars(cigars)

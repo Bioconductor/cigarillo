@@ -126,6 +126,9 @@ cigar_extent_along_pwa(cigars,
 
 \seealso{
   \itemize{
+    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+          operations and their visibility in various "projection spaces".
+
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
 

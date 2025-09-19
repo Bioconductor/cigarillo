@@ -82,8 +82,11 @@ cigars_as_ranges_along_pwa(cigars,
     the ranges on that chromosome.
   }
   \item{ops}{
-    Character vector containing the CIGAR operations to turn into ranges.
-    This must be a subset of \code{CIGAR_OPS}.
+    Character vector where the elements are single letters representing
+    valid CIGAR operations. Must be a subset of \code{\link{CIGAR_OPS}}.
+    See \code{?\link{CIGAR_OPS}} for more information.
+
+    Only the operations listed in \code{ops} will be turned into ranges.
   }
   \item{drop.empty.ranges}{
     Should empty ranges be dropped?
@@ -149,6 +152,9 @@ cigars_as_ranges_along_pwa(cigars,
 
 \seealso{
   \itemize{
+    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+          operations and their visibility in various "projection spaces".
+
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
 

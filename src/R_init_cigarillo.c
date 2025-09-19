@@ -1,5 +1,6 @@
 #include <R_ext/Rdynload.h>
 
+#include "cigar_ops_visibility.h"
 #include "inspect_cigars.h"
 #include "cigar_extent.h"
 #include "trim_cigars.h"
@@ -11,6 +12,9 @@
 
 static const R_CallMethodDef callMethods[] = {
 
+/* cigar_ops_visibility.c */
+	CALLMETHOD_DEF(C_cigar_ops_visibility, 1),
+
 /* inspect_cigars.c */
 	CALLMETHOD_DEF(C_validate_cigars, 2),
 	CALLMETHOD_DEF(C_explode_cigar_ops, 2),
@@ -18,7 +22,6 @@ static const R_CallMethodDef callMethods[] = {
 	CALLMETHOD_DEF(C_tabulate_cigar_ops, 1),
 
 /* cigar_extent.c */
-	CALLMETHOD_DEF(C_cigar_ops_visibility, 1),
 	CALLMETHOD_DEF(C_cigar_extent, 3),
 
 /* trim_cigars.c */

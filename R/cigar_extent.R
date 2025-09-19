@@ -4,32 +4,6 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### cigar_ops_visibility()
-###
-
-### The 8 "projection spaces" below are also defined at the top of the
-### src/cigar_extent.c file.
-PROJECTION_SPACES <- c(
-    "reference",
-    "reference-N-regions-removed",
-    "query",
-    "query-before-hard-clipping",
-    "query-after-soft-clipping",
-    "pairwise",
-    "pairwise-N-regions-removed",
-    "pairwise-dense"
-)
-
-cigar_ops_visibility <- function(ops=CIGAR_OPS)
-{
-    ops <- normarg_ops(ops)
-    ans <- cigarillo.Call("C_cigar_ops_visibility", ops)
-    dimnames(ans) <- list(PROJECTION_SPACES, ops)
-    ans
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Low-level helpers used by the cigar_extent_along_<space>() and
 ### cigars_as_ranges_along_<space>() functions
 ###
@@ -99,7 +73,7 @@ normarg_flags <- function(flags, cigars)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### From CIGARs to sequence lengths
+### The cigar_extent_along_<space>() functions
 ###
 
 .cigar_extent <- function(cigars, space, flags)
