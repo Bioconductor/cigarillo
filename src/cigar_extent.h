@@ -8,10 +8,12 @@ int _is_visible_in_space(
 	int space
 );
 
+SEXP C_cigar_ops_visibility(SEXP ops);
+
 SEXP C_cigar_extent(
 	SEXP cigar,
-	SEXP flag,
-	SEXP space
+	SEXP space,
+	SEXP flag
 );
 
 #endif  /* _CIGAR_EXTENT_ */

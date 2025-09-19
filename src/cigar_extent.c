@@ -15,36 +15,40 @@
 #define PAIRWISE_DENSE                  8
 
 
+/****************************************************************************
+ * C_cigar_ops_visibility()
+ */
+
 int _is_visible_in_space(char OP, int space)
 {
 	if (OP == 'M')
 		return 1;
 	switch (space) {
-	case QUERY_BEFORE_HARD_CLIPPING:
+	    case QUERY_BEFORE_HARD_CLIPPING:
 		if (OP == 'H')
 			return 1;
 		/* fall through */
-	case QUERY:
+	    case QUERY:
 		if (OP == 'S')
 			return 1;
 		/* fall through */
-	case QUERY_AFTER_SOFT_CLIPPING:
+	    case QUERY_AFTER_SOFT_CLIPPING:
 		if (OP == 'I')
 			return 1;
 		break;
-	case PAIRWISE:
+	    case PAIRWISE:
 		if (OP == 'I')
 			return 1;
 		/* fall through */
-	case REFERENCE:
+	    case REFERENCE:
 		if (OP == 'D' || OP == 'N')
 			return 1;
 		break;
-	case PAIRWISE_N_REGIONS_REMOVED:
+	    case PAIRWISE_N_REGIONS_REMOVED:
 		if (OP == 'I')
 			return 1;
 		/* fall through */
-	case REFERENCE_N_REGIONS_REMOVED:
+	    case REFERENCE_N_REGIONS_REMOVED:
 		if (OP == 'D')
 			return 1;
 	}
@@ -53,8 +57,33 @@ int _is_visible_in_space(char OP, int space)
 	return 0;
 }
 
+/* --- .Call ENTRY POINT --- */
+SEXP C_cigar_ops_visibility(SEXP ops)
+{
+	int ops_len = LENGTH(ops);
+	SEXP ans = PROTECT(allocMatrix(INTSXP, 8, ops_len));
+	int *ans_p = INTEGER(ans);
+	for (int j = 0; j < ops_len; j++) {
+		SEXP ops_elt = STRING_ELT(ops, j);
+		if (ops_elt == NA_STRING || LENGTH(ops_elt) == 0) {
+			UNPROTECT(1);
+			error("'ops' contains NAs and/or empty strings");
+		}
+		char OP = CHAR(ops_elt)[0];
+		for (int i = 0; i < 8; i++)
+			*(ans_p++) = _is_visible_in_space(OP, i + 1);
+	}
+	UNPROTECT(1);
+	return ans;
+}
+
+
+/****************************************************************************
+ * C_cigar_extent()
+ */
+
 static const char *compute_cigar_extent(const char *cigar_string, int space,
-		int *extent)
+					int *extent)
 {
 	int x, cigar_offset, n, OPL /* Operation Length */;
 	char OP /* Operation */;
@@ -71,17 +100,12 @@ static const char *compute_cigar_extent(const char *cigar_string, int space,
 	return NULL;
 }
 
-
-/****************************************************************************
- * C_cigar_extent()
- */
-
 /* --- .Call ENTRY POINT ---
    Args:
-   cigar, flag, space: see C_cigars_as_ranges() function above.
-   Return an integer vector of the same length as 'cigar' containing the
+   cigar, space, flag: see C_cigars_as_ranges() in src/cigars_as_ranges.c
+   Returns an integer vector of the same length as 'cigar' containing the
    extents of the alignments as inferred from the cigar information. */
-SEXP C_cigar_extent(SEXP cigar, SEXP flag, SEXP space)
+SEXP C_cigar_extent(SEXP cigar, SEXP space, SEXP flag)
 {
 	SEXP ans, cigar_elt;
 	int cigar_len, space0, i, *ans_elt;

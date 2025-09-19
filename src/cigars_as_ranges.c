@@ -212,13 +212,13 @@ static SEXP make_CompressedIRangesList(const IntPairAE *range_buf,
 /* --- .Call ENTRY POINT ---
    Args:
      cigar:  character vector containing extended CIGAR strings.
+     space:  single integer indicating one of the 8 supported spaces (defined
+             at the top of the cigar_extent.c file).
      flag:   NULL or an integer vector of the same length as 'cigar'
              containing the SAM flag for each read. Serves only as a way to
              indicate whether a read is mapped or not. According to the SAM
              Spec v1.4, flag bit 0x4 is the only reliable place to tell
              whether a segment (or read) is mapped (bit is 0) or not (bit is 1).
-     space:  single integer indicating one of the 8 supported spaces (defined
-             at the top of this file).
      lmmpos: integer vector of the same length as 'cigar' (or of length 1)
              containing the 1-based leftmost position/coordinate of the
              clipped read sequences.
@@ -240,7 +240,7 @@ static SEXP make_CompressedIRangesList(const IntPairAE *range_buf,
    (if 'f' is NULL) or an ordinary list of IRanges objects with 1 list element
    per level in 'f' (if 'f' is a factor). This list is then turned into a
    SimpleIRangesList object in R. */
-SEXP C_cigars_as_ranges(SEXP cigar, SEXP flag, SEXP space, SEXP lmmpos, SEXP f,
+SEXP C_cigars_as_ranges(SEXP cigar, SEXP space, SEXP flag, SEXP lmmpos, SEXP f,
 		SEXP ops, SEXP drop_empty_ranges, SEXP reduce_ranges,
 		SEXP with_ops, SEXP with_oplens)
 {

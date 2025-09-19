@@ -7,150 +7,16 @@
 ###
 
 
-### The 8 "projection spaces" below are also defined at the top of the
-### src/cigar_extent.c file.
-PROJECTION_SPACES <- c(
-    "reference",
-    "reference-N-regions-removed",
-    "query",
-    "query-before-hard-clipping",
-    "query-after-soft-clipping",
-    "pairwise",
-    "pairwise-N-regions-removed",
-    "pairwise-dense"
-)
-
-
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The 8 .ranges_to_replace_from_<space>() helpers
+### .get_indel_ops()
 ###
 
-.ranges_to_replace_from_reference <- function(cigars, to)
+.get_indel_ops <- function(from, to)
 {
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference-N-regions-removed" = "N",
-        "query"                       = c("I", "D", "N", "S"),
-        "query-before-hard-clipping"  = c("I", "D", "N", "S", "H"),
-        "query-after-soft-clipping"   = c("I", "D", "N"),
-        "pairwise"                    = "I",
-        "pairwise-N-regions-removed"  = c("I", "N"),
-        "pairwise-dense"              = c("D", "N"),
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_ref(cigars, ops=ops,
-                               with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_reference_N_regions_removed <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = "N",
-        "query"                       = c("I", "D", "S"),
-        "query-before-hard-clipping"  = c("I", "D", "S", "H"),
-        "query-after-soft-clipping"   = c("I", "D"),
-        "pairwise"                    = c("I", "N"),
-        "pairwise-N-regions-removed"  = "I",
-        "pairwise-dense"              = "D",
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_ref(cigars, N.regions.removed=TRUE, ops=ops,
-                               with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_query <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = c("I", "D", "N", "S"),
-        "reference-N-regions-removed" = c("I", "D", "S"),
-        "query-before-hard-clipping"  = "H",
-        "query-after-soft-clipping"   = "S",
-        "pairwise"                    = c("D", "N", "S"),
-        "pairwise-N-regions-removed"  = c("D", "S"),
-        "pairwise-dense"              = c("I", "S"),
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_query(cigars, ops=ops,
-                                 with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_query_before_hard_clipping <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = c("I", "D", "N", "S", "H"),
-        "reference-N-regions-removed" = c("I", "D", "S", "H"),
-        "query"                       = "H",
-        "query-after-soft-clipping"   = c("S", "H"),
-        "pairwise"                    = c("D", "N", "S", "H"),
-        "pairwise-N-regions-removed"  = c("D", "S", "H"),
-        "pairwise-dense"              = c("I", "S", "H"),
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_query(cigars, before.hard.clipping=TRUE, ops=ops,
-                                 with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_query_after_soft_clipping <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = c("I", "D", "N"),
-        "reference-N-regions-removed" = c("I", "D"),
-        "query"                       = "S",
-        "query-before-hard-clipping"  = c("S", "H"),
-        "pairwise"                    = c("D", "N"),
-        "pairwise-N-regions-removed"  = "D",
-        "pairwise-dense"              = "I",
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_query(cigars, after.soft.clipping=TRUE, ops=ops,
-                                 with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_pairwise <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = "I",
-        "reference-N-regions-removed" = c("I", "N"),
-        "query"                       = c("D", "N", "S"),
-        "query-before-hard-clipping"  = c("D", "N", "S", "H"),
-        "query-after-soft-clipping"   = c("D", "N"),
-        "pairwise-N-regions-removed"  = "N",
-        "pairwise-dense"              = c("I", "D", "N"),
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_pwa(cigars, ops=ops,
-                               with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_pairwise_N_regions_removed <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = c("I", "N"),
-        "reference-N-regions-removed" = "I",
-        "query"                       = c("D", "S"),
-        "query-before-hard-clipping"  = c("D", "S", "H"),
-        "query-after-soft-clipping"   = "D",
-        "pairwise"                    = "N",
-        "pairwise-dense"              = c("I", "D"),
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_pwa(cigars, N.regions.removed=TRUE, ops=ops,
-                               with.ops=TRUE, with.oplens=TRUE)
-}
-
-.ranges_to_replace_from_pairwise_dense <- function(cigars, to)
-{
-    stopifnot(isSingleString(to))
-    ops <- switch(to,
-        "reference"                   = c("D", "N"),
-        "reference-N-regions-removed" = "D",
-        "query"                       = c("I", "S"),
-        "query-before-hard-clipping"  = c("I", "S", "H"),
-        "query-after-soft-clipping"   = "I",
-        "pairwise"                    = c("I", "D", "N"),
-        "pairwise-N-regions-removed"  = c("I", "D"),
-        stop(wmsg(to, ": invalid space")))
-    cigars_as_ranges_along_pwa(cigars, dense=TRUE, ops=ops,
-                               with.ops=TRUE, with.oplens=TRUE)
+    stopifnot(isSingleInteger(from), isSingleInteger(to))
+    all_indel_ops <- c("I", "D", "N", "S", "H")
+    vis_mat <- cigar_ops_visibility(all_indel_ops)
+    all_indel_ops[vis_mat[from, ] != vis_mat[to, ]]
 }
 
 
@@ -184,22 +50,24 @@ PROJECTION_SPACES <- c(
     narrow(biggest_fillers[ops], 1L, oplens)
 }
 
-### Returns an XStringSetList derivative parallel to IRangesList object 'at'.
-.make_replacement_value <- function(at, class, I.letter, D.letter, N.letter,
-                                               S.letter, H.letter)
+### Returns an XStringSetList derivative parallel to IRangesList
+### object 'indel_at'.
+.make_replacement_value <- function(indel_at, class,
+                                    I.letter, D.letter, N.letter,
+                                    S.letter, H.letter)
 {
-    stopifnot(is(at, "CompressedIRangesList"), isSingleString(class))
-    unlisted_at <- unlist(at, use.names=FALSE)
-    unlisted_at_names <- names(unlisted_at)
-    stopifnot(!is.null(unlisted_at_names))
+    stopifnot(is(indel_at, "CompressedIRangesList"), isSingleString(class))
+    unlisted_indel_at <- unlist(indel_at, use.names=FALSE)
+    unlisted_indel_at_names <- names(unlisted_indel_at)
+    stopifnot(!is.null(unlisted_indel_at_names))
 
-    unlisted_ans <- rep.int(as("", class), length(unlisted_at))
-    names(unlisted_ans) <- unlisted_at_names
+    unlisted_ans <- rep.int(as("", class), length(unlisted_indel_at))
+    names(unlisted_ans) <- unlisted_indel_at_names
 
-    inject_idx <- which(width(unlisted_at) == 0L)
+    inject_idx <- which(width(unlisted_indel_at) == 0L)
     if (length(inject_idx) != 0L) {
-        oplens <- mcols(unlisted_at)[inject_idx, "oplen"]
-        ops <- unlisted_at_names[inject_idx]
+        oplens <- mcols(unlisted_indel_at)[inject_idx, "oplen"]
+        ops <- unlisted_indel_at_names[inject_idx]
         filler_seqs <- .make_filler_sequences(oplens, ops,
                                               seqtype(unlisted_ans),
                                               I.letter, D.letter, N.letter,
@@ -207,7 +75,7 @@ PROJECTION_SPACES <- c(
         stopifnot(identical(names(filler_seqs), ops))
         unlisted_ans[inject_idx] <- filler_seqs
     }
-    relist(unlisted_ans, at)
+    relist(unlisted_ans, indel_at)
 }
 
 
@@ -221,6 +89,7 @@ project_sequences <- function(x, cigars, from="query", to="reference",
 {
     if (!is(x, "XStringSet"))
         stop("'x' must be an XStringSet object")
+    cigars <- normarg_cigars(cigars)
     from <- match.arg(from, PROJECTION_SPACES)
     to <- match.arg(to, PROJECTION_SPACES)
     I.letter <- Biostrings:::.normarg_padding.letter(I.letter, seqtype(x))
@@ -242,11 +111,14 @@ project_sequences <- function(x, cigars, from="query", to="reference",
              "when 'from' is not \"query\" and 'to' ",
              "is \"query-before-hard-clipping\"")
 
-    FUN <- paste0(".ranges_to_replace_from_", chartr("-", "_", from))
-    at <- do.call(FUN, list(cigars=cigars, to=to))
-    value <- .make_replacement_value(at, class(x),
+    from <- match(from, PROJECTION_SPACES)
+    to <- match(to, PROJECTION_SPACES)
+    indel_ops <- .get_indel_ops(from, to)
+    indel_at <- cigars_as_ranges(cigars, from, ops=indel_ops,
+                                 with.ops=TRUE, with.oplens=TRUE)
+    value <- .make_replacement_value(indel_at, class(x),
                                      I.letter, D.letter, N.letter,
                                      S.letter, H.letter)
-    replaceAt(x, at, value=value)
+    replaceAt(x, indel_at, value=value)
 }
 

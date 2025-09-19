@@ -35,19 +35,31 @@
 }
 
 \usage{
-cigar_extent_along_ref(cigars, flags=NULL,
-        N.regions.removed=FALSE)
+cigar_extent_along_ref(cigars,
+             N.regions.removed=FALSE,
+             flags=NULL)
 
-cigar_extent_along_query(cigars, flags=NULL,
-        before.hard.clipping=FALSE, after.soft.clipping=FALSE)
+cigar_extent_along_query(cigars,
+             before.hard.clipping=FALSE, after.soft.clipping=FALSE,
+             flags=NULL)
 
-cigar_extent_along_pwa(cigars, flags=NULL,
-        N.regions.removed=FALSE, dense=FALSE)
+cigar_extent_along_pwa(cigars,
+             N.regions.removed=FALSE, dense=FALSE,
+             flags=NULL)
 }
 
 \arguments{
   \item{cigars}{
     A character vector or factor containing CIGAR strings.
+  }
+  \item{N.regions.removed}{
+    \code{TRUE} or \code{FALSE}.
+
+    If \code{TRUE}, then \code{cigar_extent_along_ref} reports the CIGAR
+    extents with respect to the "reference space" from which the N regions
+    have been removed, and \code{cigar_extent_along_pwa} reports them with
+    respect to the "pairwise alignment space" from which the N regions
+    have been removed.
   }
   \item{flags}{
     \code{NULL} or an integer vector containing the SAM flag for
@@ -58,15 +70,6 @@ cigar_extent_along_pwa(cigars, flags=NULL,
     is 1). If the \code{flags} argument is supplied, then
     \code{cigar_extent_along_ref}, \code{cigar_extent_along_query}, and
     \code{cigar_extent_along_pwa} return \code{NA}s for unmapped reads.
-  }
-  \item{N.regions.removed}{
-    \code{TRUE} or \code{FALSE}.
-
-    If \code{TRUE}, then \code{cigar_extent_along_ref} reports the CIGAR
-    extents with respect to the "reference space" from which the N regions
-    have been removed, and \code{cigar_extent_along_pwa} reports them with
-    respect to the "pairwise alignment space" from which the N regions
-    have been removed.
   }
   \item{before.hard.clipping}{
     \code{TRUE} or \code{FALSE}.

@@ -92,23 +92,19 @@ static int ops_lkup_table[256];
 
 void _init_ops_lkup_table(SEXP ops)
 {
-	int ops_len, i;
-	SEXP ops_elt;
-	char OP;
-
 	if (ops == R_NilValue) {
-		for (i = 0; i < 256; i++)
+		for (int i = 0; i < 256; i++)
 			ops_lkup_table[i] = 1;
 		return;
 	}
-	for (i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 		ops_lkup_table[i] = 0;
-	ops_len = LENGTH(ops);
-	for (i = 0; i < ops_len; i++) {
-		ops_elt = STRING_ELT(ops, i);
+	int ops_len = LENGTH(ops);
+	for (int i = 0; i < ops_len; i++) {
+		SEXP ops_elt = STRING_ELT(ops, i);
 		if (ops_elt == NA_STRING || LENGTH(ops_elt) == 0)
 			error("'ops' contains NAs and/or empty strings");
-		OP = CHAR(ops_elt)[0];
+		char OP = CHAR(ops_elt)[0];
 		ops_lkup_table[(unsigned char) OP] = 1;
 	}
 	return;

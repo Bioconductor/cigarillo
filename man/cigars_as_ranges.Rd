@@ -14,25 +14,37 @@
 }
 
 \usage{
-cigars_as_ranges_along_ref(cigars, flags=NULL,
-        N.regions.removed=FALSE, lmmpos=1L, f=NULL,
-        ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
-        with.ops=FALSE, with.oplens=FALSE)
+cigars_as_ranges_along_ref(cigars,
+          N.regions.removed=FALSE,
+          flags=NULL, lmmpos=1L, f=NULL,
+          ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
+          with.ops=FALSE, with.oplens=FALSE)
 
-cigars_as_ranges_along_query(cigars, flags=NULL,
-        before.hard.clipping=FALSE, after.soft.clipping=FALSE,
-        ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
-        with.ops=FALSE, with.oplens=FALSE)
+cigars_as_ranges_along_query(cigars,
+          before.hard.clipping=FALSE, after.soft.clipping=FALSE,
+          flags=NULL,
+          ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
+          with.ops=FALSE, with.oplens=FALSE)
 
-cigars_as_ranges_along_pwa(cigars, flags=NULL,
-        N.regions.removed=FALSE, dense=FALSE,
-        ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
-        with.ops=FALSE, with.oplens=FALSE)
+cigars_as_ranges_along_pwa(cigars,
+          N.regions.removed=FALSE, dense=FALSE,
+          flags=NULL,
+          ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
+          with.ops=FALSE, with.oplens=FALSE)
 }
 
 \arguments{
   \item{cigars}{
     A character vector or factor containing CIGAR strings.
+  }
+  \item{N.regions.removed}{
+    \code{TRUE} or \code{FALSE}.
+
+    If \code{TRUE}, then \code{cigars_as_ranges_along_ref} reports ranges
+    with respect to the "reference space" from which the N regions have
+    been removed, and \code{cigars_as_ranges_along_pwa} reports them with
+    respect to the "pairwise alignment space" from which the N regions
+    have been removed.
   }
   \item{flags}{
     \code{NULL} or an integer vector containing the SAM flag for
@@ -45,15 +57,6 @@ cigars_as_ranges_along_pwa(cigars, flags=NULL,
     and \code{cigars_as_ranges_along_pwa} don't produce any range
     for unmapped reads i.e. they treat them as if their CIGAR was empty
     (independently of what their CIGAR is).
-  }
-  \item{N.regions.removed}{
-    \code{TRUE} or \code{FALSE}.
-
-    If \code{TRUE}, then \code{cigars_as_ranges_along_ref} reports ranges
-    with respect to the "reference space" from which the N regions have
-    been removed, and \code{cigars_as_ranges_along_pwa} reports them with
-    respect to the "pairwise alignment space" from which the N regions
-    have been removed.
   }
   \item{lmmpos}{
     An integer vector containing the 1-based leftmost mapping POSition

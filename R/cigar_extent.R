@@ -3,18 +3,36 @@
 ### -------------------------------------------------------------------------
 
 
-normarg_flags <- function(flags, cigars)
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### cigar_ops_visibility()
+###
+
+### The 8 "projection spaces" below are also defined at the top of the
+### src/cigar_extent.c file.
+PROJECTION_SPACES <- c(
+    "reference",
+    "reference-N-regions-removed",
+    "query",
+    "query-before-hard-clipping",
+    "query-after-soft-clipping",
+    "pairwise",
+    "pairwise-N-regions-removed",
+    "pairwise-dense"
+)
+
+cigar_ops_visibility <- function(ops=CIGAR_OPS)
 {
-    if (!is.null(flags)) {
-        if (!is.numeric(flags))
-            stop("'flags' must be NULL or a vector of integers")
-        if (!is.integer(flags))
-            flags <- as.integer(flags)
-        if (length(cigars) != length(flags))
-            stop("'cigars' and 'flags' must have the same length")
-    }
-    flags
+    ops <- normarg_ops(ops)
+    ans <- cigarillo.Call("C_cigar_ops_visibility", ops)
+    dimnames(ans) <- list(PROJECTION_SPACES, ops)
+    ans
 }
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Low-level helpers used by the cigar_extent_along_<space>() and
+### cigars_as_ranges_along_<space>() functions
+###
 
 select_reference_space <- function(N.regions.removed)
 {
@@ -66,12 +84,25 @@ select_pairwise_space <- function(N.regions.removed, dense)
     space
 }
 
+normarg_flags <- function(flags, cigars)
+{
+    if (!is.null(flags)) {
+        if (!is.numeric(flags))
+            stop("'flags' must be NULL or a vector of integers")
+        if (!is.integer(flags))
+            flags <- as.integer(flags)
+        if (length(cigars) != length(flags))
+            stop("'cigars' and 'flags' must have the same length")
+    }
+    flags
+}
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### From CIGARs to sequence lengths
 ###
 
-.cigar_extent <- function(cigars, flags, space)
+.cigar_extent <- function(cigars, space, flags)
 {
     cigars <- normarg_cigars(cigars)
     flags <- normarg_flags(flags, cigars)
@@ -79,28 +110,31 @@ select_pairwise_space <- function(N.regions.removed, dense)
         stop("'space' must be a single integer")
     if (!is.integer(space))
         space <- as.integer(space)
-    cigarillo.Call("C_cigar_extent", cigars, flags, space)
+    cigarillo.Call("C_cigar_extent", cigars, space, flags)
 }
 
-cigar_extent_along_ref <- function(cigars, flags=NULL,
-                                   N.regions.removed=FALSE)
+cigar_extent_along_ref <- function(cigars,
+                                   N.regions.removed=FALSE,
+                                   flags=NULL)
 {
     space <- select_reference_space(N.regions.removed)
-    .cigar_extent(cigars, flags, space)
+    .cigar_extent(cigars, space, flags)
 }
 
-cigar_extent_along_query <- function(cigars, flags=NULL,
+cigar_extent_along_query <- function(cigars,
                                      before.hard.clipping=FALSE,
-                                     after.soft.clipping=FALSE)
+                                     after.soft.clipping=FALSE,
+                                     flags=NULL)
 {
     space <- select_query_space(before.hard.clipping, after.soft.clipping)
-    .cigar_extent(cigars, flags, space)
+    .cigar_extent(cigars, space, flags)
 }
 
-cigar_extent_along_pwa <- function(cigars, flags=NULL,
-                                   N.regions.removed=FALSE, dense=FALSE)
+cigar_extent_along_pwa <- function(cigars,
+                                   N.regions.removed=FALSE, dense=FALSE,
+                                   flags=NULL)
 {
     space <- select_pairwise_space(N.regions.removed, dense)
-    .cigar_extent(cigars, flags, space)
+    .cigar_extent(cigars, space, flags)
 }
 

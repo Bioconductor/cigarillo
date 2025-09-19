@@ -18,6 +18,7 @@ static const R_CallMethodDef callMethods[] = {
 	CALLMETHOD_DEF(C_tabulate_cigar_ops, 1),
 
 /* cigar_extent.c */
+	CALLMETHOD_DEF(C_cigar_ops_visibility, 1),
 	CALLMETHOD_DEF(C_cigar_extent, 3),
 
 /* trim_cigars.c */

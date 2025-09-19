@@ -5,8 +5,8 @@
 
 SEXP C_cigars_as_ranges(
 	SEXP cigar,
-	SEXP flag,
 	SEXP space,
+	SEXP flag,
 	SEXP lmmpos,
 	SEXP f,
 	SEXP ops,
