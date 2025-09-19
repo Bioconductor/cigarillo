@@ -3,7 +3,8 @@
 #include "inspect_cigars.h"
 
 
-/* The 8 supported spaces. */
+/* The 8 "projection spaces" below are also defined at the top of the
+   R/project_sequences.R file. */
 #define REFERENCE                       1
 #define REFERENCE_N_REGIONS_REMOVED     2
 #define QUERY                           3

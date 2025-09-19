@@ -1,6 +1,7 @@
 useDynLib(cigarillo)
 
 import(methods)
+importFrom(stats, setNames)
 
 import(BiocGenerics)
 import(S4Vectors)
@@ -31,15 +32,15 @@ export(
     cigars_as_ranges_along_query,
     cigars_as_ranges_along_pwa,
 
-    ## project-positions.R:
+    ## project_positions.R:
     query_pos_as_ref_pos,
     ref_pos_as_query_pos,
+
+    ## project_sequences.R:
+    project_sequences,
 
     ## map_ref_ranges_to_query.R:
     map_ref_ranges_to_query,
     fast_map_ref_ranges_to_query
-
-    ## sequenceLayer.R:
-
 )
 

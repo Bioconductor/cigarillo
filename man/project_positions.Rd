@@ -1,6 +1,5 @@
-\name{project-positions}
+\name{project_positions}
 
-\alias{project-positions}
 \alias{project_positions}
 
 \alias{query_pos_as_ref_pos}
@@ -9,12 +8,12 @@
 \title{Project positions from query to reference space and vice versa}
 
 \description{
-  \code{query_pos_as_ref_pos()} projects positions that are relative
-  to the "query space" onto the "reference space", that is, it turns
-  them into positions that are relative to the "reference space".
+  \code{query_pos_as_ref_pos()} projects positions defined along
+  the "query space" onto the "reference space", that is, it turns
+  them into positions defined along the "reference space".
 
   \code{ref_pos_as_query_pos()} does the opposite i.e. it projects
-  positions that are relative relative to the "reference space" onto
+  positions that are defined along the "reference space" onto
   the "query space".
 }
 
@@ -99,8 +98,11 @@ ref_pos_as_query_pos(ref_pos, cigars, lmmpos, narrow.left)
           \code{\link{trim_cigars_along_query}} to trim CIGAR strings
           along the "reference space" and "query space", respectively.
 
-    \item \link{cigars_as_ranges} for turning CIGAR strings into ranges
+    \item \link{cigars_as_ranges} to turn CIGAR strings into ranges
           of positions.
+
+    \item \link{project_sequences} to project sequences from one space
+          to the other.
   }
 }
 

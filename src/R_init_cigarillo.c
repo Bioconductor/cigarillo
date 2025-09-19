@@ -25,7 +25,7 @@ static const R_CallMethodDef callMethods[] = {
 	CALLMETHOD_DEF(C_trim_cigars_along_query, 3),
 
 /* cigars_as_ranges.c */
-	CALLMETHOD_DEF(C_cigars_as_ranges, 9),
+	CALLMETHOD_DEF(C_cigars_as_ranges, 10),
 
 /* project_positions.c */
 	CALLMETHOD_DEF(C_query_pos_as_ref_pos, 4),

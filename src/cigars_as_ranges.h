@@ -12,7 +12,8 @@ SEXP C_cigars_as_ranges(
 	SEXP ops,
 	SEXP drop_empty_ranges,
 	SEXP reduce_ranges,
-	SEXP with_ops
+	SEXP with_ops,
+	SEXP with_oplens
 );
 
 #endif  /* _CIGARS_AS_RANGES_H_ */

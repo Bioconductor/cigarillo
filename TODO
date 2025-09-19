@@ -1,13 +1,33 @@
-- Once cigarillo is in Bioconductor:
+High-priority TODO list
+=======================
 
-    o Deprecate all CIGAR utility functions defined in GenomicAlignments in
-      favor of the new CIGAR utility functions defined in cigarillo.
+Once cigarillo is in Bioconductor:
 
-    o Modify the code in GenomicAlignments/R/coordinate-mapping-methods.R
-      to use query_pos_as_ref_pos(), ref_pos_as_query_pos(), and
-      fast_map_ref_ranges_to_query().
-      In particular GenomicAlignments:::.mapToAlignments() should use
-      fast_map_ref_ranges_to_query() instead of very inefficient .Call
-      entry point "map_ref_locs_to_query_locs" defined in GenomicAlignments.
-      Then GenomicAlignments/src/coordinate_mapping_methods.c can go away.
+- Deprecate all CIGAR utility functions defined in GenomicAlignments in
+  favor of the new CIGAR utility functions defined in cigarillo.
+
+- Modify the code in GenomicAlignments/R/coordinate-mapping-methods.R
+  to use query_pos_as_ref_pos(), ref_pos_as_query_pos(), and
+  fast_map_ref_ranges_to_query().
+  In particular GenomicAlignments:::.mapToAlignments() should use
+  fast_map_ref_ranges_to_query() instead of very inefficient .Call
+  entry point "map_ref_locs_to_query_locs" defined in GenomicAlignments.
+  Then GenomicAlignments/src/coordinate_mapping_methods.c can go away.
+
+
+Things to do at BioC 3.22 release time
+======================================
+
+- Update README.md
+
+
+Low-priority TODO list
+======================
+
+- Add a general utility (e.g. project_positions()) to project positions from
+  an **arbitrary** space (query, reference, or pairwise alignment) to the
+  other. The current utilities in R/project_positions.R only allow one to
+  project positions from the query space to the reference space, and vice
+  versa. This contrasts with the capabilities of project_sequences() which
+  allows one to project sequences from an **arbitrary** space to the other.
 

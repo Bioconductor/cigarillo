@@ -130,11 +130,14 @@ cigar_extent_along_pwa(cigars, flags=NULL,
           \code{\link{trim_cigars_along_query}} to trim CIGAR strings
           along the "reference space" and "query space", respectively.
 
-    \item \link{cigars_as_ranges} for turning CIGAR strings into ranges
+    \item \link{cigars_as_ranges} to turn CIGAR strings into ranges
           of positions.
 
     \item \link{project_positions} to project positions from query to
           reference space and vice versa.
+
+    \item \link{project_sequences} to project sequences from one space
+          to the other.
   }
 }
 

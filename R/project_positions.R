@@ -1,5 +1,5 @@
 ### =========================================================================
-### Project positions from query to reference space and vice versa
+### Project positions from query to reference space, and vice versa
 ### -------------------------------------------------------------------------
 ###
 

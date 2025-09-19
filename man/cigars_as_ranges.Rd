@@ -17,17 +17,17 @@
 cigars_as_ranges_along_ref(cigars, flags=NULL,
         N.regions.removed=FALSE, lmmpos=1L, f=NULL,
         ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
-        with.ops=FALSE)
+        with.ops=FALSE, with.oplens=FALSE)
 
 cigars_as_ranges_along_query(cigars, flags=NULL,
         before.hard.clipping=FALSE, after.soft.clipping=FALSE,
         ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
-        with.ops=FALSE)
+        with.ops=FALSE, with.oplens=FALSE)
 
 cigars_as_ranges_along_pwa(cigars, flags=NULL,
         N.regions.removed=FALSE, dense=FALSE,
         ops=CIGAR_OPS, drop.empty.ranges=FALSE, reduce.ranges=FALSE,
-        with.ops=FALSE)
+        with.ops=FALSE, with.oplens=FALSE)
 }
 
 \arguments{
@@ -91,8 +91,15 @@ cigars_as_ranges_along_pwa(cigars, flags=NULL,
     object.
   }
   \item{with.ops}{
+    \code{TRUE} or \code{FALSE}.
     Should the returned ranges be named/labeled with their corresponding
-    CIGAR operation.
+    CIGAR operation?
+  }
+  \item{with.oplens}{
+    \code{TRUE} or \code{FALSE}.
+    If \code{with.oplens} is \code{TRUE}, then the returned
+    \link[IRanges]{IRangesList} object will carry the lengths of the
+    CIGAR operations in an inner metadata column named \code{oplen}.
   }
   \item{before.hard.clipping}{
     \code{TRUE} or \code{FALSE}.
@@ -150,6 +157,12 @@ cigars_as_ranges_along_pwa(cigars, flags=NULL,
           \code{\link{trim_cigars_along_query}} to trim CIGAR strings
           along the "reference space" and "query space", respectively.
 
+    \item \link{project_positions} to project positions from query to
+          reference space and vice versa.
+
+    \item \link{project_sequences} to project sequences from one space
+          to the other.
+
     \item The \link[IRanges]{IRanges} and \link[IRanges]{IRangesList}
           classes in the \pkg{IRanges} package.
   }
@@ -163,25 +176,28 @@ my_cigars <- c("40M2I9M", cigar1, "2S10M2000N15M", "3H33M5H")
 ## Turn CIGAR strings into ranges along the "reference space"
 ## ---------------------------------------------------------------------
 
-cigars_as_ranges_along_ref(cigar1, with.ops=TRUE)[[1]]
+cigars_as_ranges_along_ref(cigar1, with.ops=TRUE, with.oplens=TRUE)[[1]]
 
-cigars_as_ranges_along_ref(cigar1,
-                           reduce.ranges=TRUE, with.ops=TRUE)[[1]]
+cigars_as_ranges_along_ref(cigar1, reduce.ranges=TRUE,
+                           with.ops=TRUE, with.oplens=TRUE)[[1]]
 
 ops <- setdiff(CIGAR_OPS, "N")
 
-cigars_as_ranges_along_ref(cigar1, ops=ops, with.ops=TRUE)[[1]]
-
 cigars_as_ranges_along_ref(cigar1, ops=ops,
-                           reduce.ranges=TRUE, with.ops=TRUE)[[1]]
+                           with.ops=TRUE, with.oplens=TRUE)[[1]]
+
+cigars_as_ranges_along_ref(cigar1, ops=ops, reduce.ranges=TRUE,
+                           with.ops=TRUE, with.oplens=TRUE)[[1]]
 
 ops <- setdiff(CIGAR_OPS, c("D", "N"))
 
-cigars_as_ranges_along_ref(cigar1, ops=ops, with.ops=TRUE)[[1]]
+cigars_as_ranges_along_ref(cigar1, ops=ops,
+                           with.ops=TRUE, with.oplens=TRUE)[[1]]
 
 lmmpos <- c(1, 1001, 1,  351)
 
-cigars_as_ranges_along_ref(my_cigars, lmmpos=lmmpos, with.ops=TRUE)
+cigars_as_ranges_along_ref(my_cigars, lmmpos=lmmpos,
+                           with.ops=TRUE, with.oplens=TRUE)
 
 cigars_as_ranges_along_ref(my_cigars, lmmpos=lmmpos,
                            ops=setdiff(CIGAR_OPS, "N"),
@@ -200,14 +216,15 @@ cigars_as_ranges_along_ref(my_cigars, lmmpos=lmmpos, f=seqnames, ops=ops)
 ## Turn CIGAR strings into ranges along the "query space"
 ## ---------------------------------------------------------------------
 
-cigars_as_ranges_along_query(my_cigars, with.ops=TRUE)
+cigars_as_ranges_along_query(my_cigars, with.ops=TRUE, with.oplens=TRUE)
 
 ## ---------------------------------------------------------------------
 ## Turn CIGAR strings into ranges along the "pairwise alignment space"
 ## ---------------------------------------------------------------------
 
-cigars_as_ranges_along_pwa(my_cigars, with.ops=TRUE)
-cigars_as_ranges_along_pwa(my_cigars, dense=TRUE, with.ops=TRUE)
+cigars_as_ranges_along_pwa(my_cigars, with.ops=TRUE, with.oplens=TRUE)
+cigars_as_ranges_along_pwa(my_cigars, dense=TRUE,
+                           with.ops=TRUE, with.oplens=TRUE)
 }
 
 \keyword{manip}
