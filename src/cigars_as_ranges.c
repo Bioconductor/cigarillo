@@ -6,7 +6,7 @@
 #include "cigar_ops_visibility.h"
 #include "inspect_cigars.h"
 
-#include <string.h>  /* for memcpy */
+#include <string.h>  /* for memcpy() */
 
 
 /* TODO: This should go in the IRanges package and be exposed
@@ -212,22 +212,22 @@ static SEXP make_CompressedIRangesList(const IntPairAE *range_buf,
 
 /* --- .Call ENTRY POINT ---
    Args:
-     cigar:  character vector containing extended CIGAR strings.
+     cigars: character vector containing extended CIGAR strings.
      space:  single integer indicating one of the 8 supported spaces (defined
              at the top of the cigar_extent.c file).
-     flag:   NULL or an integer vector of the same length as 'cigar'
+     flags:  NULL or an integer vector of the same length as 'cigars'
              containing the SAM flag for each read. Serves only as a way to
              indicate whether a read is mapped or not. According to the SAM
              Spec v1.4, flag bit 0x4 is the only reliable place to tell
              whether a segment (or read) is mapped (bit is 0) or not (bit is 1).
-     lmmpos: integer vector of the same length as 'cigar' (or of length 1)
+     lmmpos: integer vector of the same length as 'cigars' (or of length 1)
              containing the 1-based leftmost position/coordinate of the
              clipped read sequences.
-     f:      NULL or a factor of length 'cigar'. If NULL, then the ranges are
+     f:      NULL or a factor of length 'cigars'. If NULL, then the ranges are
              grouped by alignment and stored in a CompressedIRangesList object
-             with 1 list element per element in 'cigar'. If a factor, then they
-             are grouped by factor level and stored in an ordinary list of
-             IRanges objects with 1 list element per level in 'f' and named
+             with 1 list element per element in 'cigars'. If a factor, then
+             they are grouped by factor level and stored in an ordinary list
+             of IRanges objects with 1 list element per level in 'f' and named
              with those levels.
      ops:    NULL or a character vector containing the CIGAR operations to
              translate to ranges. If NULL, then all CIGAR operations are
@@ -237,18 +237,19 @@ static SEXP make_CompressedIRangesList(const IntPairAE *range_buf,
      with_ops: TRUE or FALSE indicating whether the returned ranges should be
              named with their corresponding CIGAR operation.
 
-   Returns either a CompressedIRangesList object of the same length as 'cigar'
+   Returns either a CompressedIRangesList object of the same length as 'cigars'
    (if 'f' is NULL) or an ordinary list of IRanges objects with 1 list element
    per level in 'f' (if 'f' is a factor). This list is then turned into a
    SimpleIRangesList object in R. */
-SEXP C_cigars_as_ranges(SEXP cigar, SEXP space, SEXP flag, SEXP lmmpos, SEXP f,
+SEXP C_cigars_as_ranges(SEXP cigars, SEXP space,
+		SEXP flags, SEXP lmmpos, SEXP f,
 		SEXP ops, SEXP drop_empty_ranges, SEXP reduce_ranges,
 		SEXP with_ops, SEXP with_oplens)
 {
-	int cigar_len = LENGTH(cigar);
-	const int *flag_p;
-	if (flag != R_NilValue)
-		flag_p = INTEGER(flag);
+	int cigar_len = LENGTH(cigars);
+	const int *flags_p;
+	if (flags != R_NilValue)
+		flags_p = INTEGER(flags);
 	_init_ops_lkup_table(ops);
 	int space0 = INTEGER(space)[0];
 	int pos_len = LENGTH(lmmpos);
@@ -290,30 +291,30 @@ SEXP C_cigars_as_ranges(SEXP cigar, SEXP space, SEXP flag, SEXP lmmpos, SEXP f,
 		}
 	}
 	for (int i = 0; i < cigar_len; i++) {
-		if (flag != R_NilValue) {
-			if (*flag_p == NA_INTEGER) {
+		if (flags != R_NilValue) {
+			if (*flags_p == NA_INTEGER) {
 				if (f_is_NULL)
 					UNPROTECT(1);
-				error("'flag' contains NAs");
+				error("'flags' contains NAs");
 			}
-			if (*flag_p & 0x004) {
+			if (*flags_p & 0x004) {
 				/* The CIGAR of an unmapped read doesn't
 				   produce any range i.e. it's treated as an
 				   empty CIGAR. */
 				goto for_tail;
 			}
 		}
-		SEXP cigar_elt = STRING_ELT(cigar, i);
-		if (cigar_elt == NA_STRING) {
+		SEXP cigars_elt = STRING_ELT(cigars, i);
+		if (cigars_elt == NA_STRING) {
 			if (f_is_NULL)
 				UNPROTECT(1);
-			error("'cigar[%d]' is NA", i + 1);
+			error("'cigars[%d]' is NA", i + 1);
 		}
-		const char *cigar_string = CHAR(cigar_elt);
+		const char *cigar_string = CHAR(cigars_elt);
 		if (strcmp(cigar_string, "*") == 0) {
 			if (f_is_NULL)
 				UNPROTECT(1);
-			error("'cigar[%d]' is \"*\"", i + 1);
+			error("'cigars[%d]' is \"*\"", i + 1);
 		}
 		if (*lmmpos_p == NA_INTEGER || *lmmpos_p == 0) {
 			if (f_is_NULL)
@@ -332,11 +333,11 @@ SEXP C_cigars_as_ranges(SEXP cigar, SEXP space, SEXP flag, SEXP lmmpos, SEXP f,
 		if (errmsg != NULL) {
 			if (f_is_NULL)
 				UNPROTECT(1);
-			error("in 'cigar[%d]': %s", i + 1, errmsg);
+			error("in 'cigars[%d]': %s", i + 1, errmsg);
 		}
 for_tail:
-		if (flag != R_NilValue)
-			flag_p++;
+		if (flags != R_NilValue)
+			flags_p++;
 		if (pos_len != 1)
 			lmmpos_p++;
 		if (f_is_NULL) {

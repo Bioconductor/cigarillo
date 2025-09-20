@@ -24,38 +24,38 @@ static const char *compute_cigar_extent(const char *cigar_string, int space,
 
 /* --- .Call ENTRY POINT ---
    Args:
-   cigar, space, flag: see C_cigars_as_ranges() in src/cigars_as_ranges.c
-   Returns an integer vector of the same length as 'cigar' containing the
-   extents of the alignments as inferred from the cigar information. */
-SEXP C_cigar_extent(SEXP cigar, SEXP space, SEXP flag)
+   cigars, space, flags: see C_cigars_as_ranges() in src/cigars_as_ranges.c
+   Returns an integer vector of the same length as 'cigars' containing the
+   extents of the alignments as inferred from the cigars information. */
+SEXP C_cigar_extent(SEXP cigars, SEXP space, SEXP flags)
 {
-	SEXP ans, cigar_elt;
-	int cigar_len, space0, i, *ans_elt;
-	const int *flag_elt;
+	SEXP ans;
+	int space0, i, *ans_elt;
+	const int *flags_elt;
 	const char *cigar_string, *errmsg;
 
-	cigar_len = LENGTH(cigar);
-	if (flag != R_NilValue)
-		flag_elt = INTEGER(flag);
+	int ncigars = LENGTH(cigars);
+	if (flags != R_NilValue)
+		flags_elt = INTEGER(flags);
 	space0 = INTEGER(space)[0];
-	PROTECT(ans = NEW_INTEGER(cigar_len));
-	for (i = 0, ans_elt = INTEGER(ans); i < cigar_len; i++, ans_elt++) {
-		if (flag != R_NilValue) {
-			if (*flag_elt == NA_INTEGER) {
+	PROTECT(ans = NEW_INTEGER(ncigars));
+	for (i = 0, ans_elt = INTEGER(ans); i < ncigars; i++, ans_elt++) {
+		if (flags != R_NilValue) {
+			if (*flags_elt == NA_INTEGER) {
 				UNPROTECT(1);
-				error("'flag' contains NAs");
+				error("'flags' contains NAs");
 			}
-			if (*flag_elt & 0x004) {
+			if (*flags_elt & 0x004) {
 				*ans_elt = NA_INTEGER;
 				goto for_tail;
 			}
 		}
-		cigar_elt = STRING_ELT(cigar, i);
-		if (cigar_elt == NA_STRING) {
+		SEXP cigars_elt = STRING_ELT(cigars, i);
+		if (cigars_elt == NA_STRING) {
 			*ans_elt = NA_INTEGER;
 			goto for_tail;
 		}
-		cigar_string = CHAR(cigar_elt);
+		cigar_string = CHAR(cigars_elt);
 		if (strcmp(cigar_string, "*") == 0) {
 			*ans_elt = NA_INTEGER;
 			goto for_tail;
@@ -63,11 +63,11 @@ SEXP C_cigar_extent(SEXP cigar, SEXP space, SEXP flag)
 		errmsg = compute_cigar_extent(cigar_string, space0, ans_elt);
 		if (errmsg != NULL) {
 			UNPROTECT(1);
-			error("in 'cigar[%d]': %s", i + 1, errmsg);
+			error("in 'cigars[%d]': %s", i + 1, errmsg);
 		}
 for_tail:
-		if (flag != R_NilValue)
-			flag_elt++;
+		if (flags != R_NilValue)
+			flags_elt++;
 	}
 	UNPROTECT(1);
 	return ans;

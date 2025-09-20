@@ -134,14 +134,14 @@ int _to_query(int ref_pos, const char *cig, int lmmpos, Rboolean narrow_left)
  * --- .Call ENTRY POINT ---
  * Args:
  *   query_pos:   positions along the query space
- *   cigar:       character string containing the extended CIGAR
+ *   cigars:      character string containing the extended CIGAR
  *   lmmpos:      1-based leftmost mapping POSition
  *   narrow_left: whether to narrow to the left (or right) side of a gap
  * Returns an integer vector of positions along the reference space. This
  * assumes that the query positions actually occur in the reference space,
  * outside of any deletions or insertions.
  */
-SEXP C_query_pos_as_ref_pos(SEXP query_pos, SEXP cigar, SEXP lmmpos,
+SEXP C_query_pos_as_ref_pos(SEXP query_pos, SEXP cigars, SEXP lmmpos,
 			    SEXP narrow_left)
 {
 	int npos, i;
@@ -150,7 +150,7 @@ SEXP C_query_pos_as_ref_pos(SEXP query_pos, SEXP cigar, SEXP lmmpos,
 	npos = LENGTH(query_pos);
 	PROTECT(ref_pos = allocVector(INTSXP, npos));
 	for (i = 0; i < npos; i++) {
-		const char *cig_i = CHAR(STRING_ELT(cigar, i));
+		const char *cig_i = CHAR(STRING_ELT(cigars, i));
 		INTEGER(ref_pos)[i] = _to_ref(INTEGER(query_pos)[i],
 					      cig_i, INTEGER(lmmpos)[i],
 					      asLogical(narrow_left));
@@ -165,14 +165,14 @@ SEXP C_query_pos_as_ref_pos(SEXP query_pos, SEXP cigar, SEXP lmmpos,
  * --- .Call ENTRY POINT ---
  * Args:
  *   ref_pos:     positions along the reference space
- *   cigar:       character string containing the extended CIGAR
+ *   cigars:      character string containing the extended CIGAR
  *   lmmpos:      1-based leftmost mapping POSition
  *   narrow_left: whether to narrow to the left (or right) side of a gap
  * Returns an integer vector of positions along the query space. This
  * assumes that the reference positions actually occur in the query space,
  * outside of any deletions or insertions.
  */
-SEXP C_ref_pos_as_query_pos(SEXP ref_pos, SEXP cigar, SEXP lmmpos,
+SEXP C_ref_pos_as_query_pos(SEXP ref_pos, SEXP cigars, SEXP lmmpos,
 			    SEXP narrow_left)
 {
 	int npos, i;
@@ -181,7 +181,7 @@ SEXP C_ref_pos_as_query_pos(SEXP ref_pos, SEXP cigar, SEXP lmmpos,
 	npos = LENGTH(ref_pos);
 	PROTECT(query_pos = allocVector(INTSXP, npos));
 	for (i = 0; i < npos; i++) {
-		const char *cig_i = CHAR(STRING_ELT(cigar, i));
+		const char *cig_i = CHAR(STRING_ELT(cigars, i));
 		INTEGER(query_pos)[i] = _to_query(INTEGER(ref_pos)[i],
 						  cig_i, INTEGER(lmmpos)[i],
 						  asLogical(narrow_left));

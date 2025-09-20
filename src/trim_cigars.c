@@ -13,16 +13,14 @@ static char errmsg_buf[200];
 static const char *Ltrim_along_ref(SEXP cigar_string,
 				   int *Lnpos, int *Loffset, int *rshift)
 {
-	const char *cig0;
-	int offset, n, OPL /* Operation Length */;
-	char OP /* Operation */;
-
 	if (cigar_string == NA_STRING)
 		return "CIGAR string is NA";
 	if (LENGTH(cigar_string) == 0)
 		return "CIGAR string is empty";
-	cig0 = CHAR(cigar_string);
-	*rshift = offset = 0;
+	const char *cig0 = CHAR(cigar_string);
+	*rshift = 0;
+	int n, offset = 0, OPL /* Operation Length */;
+	char OP /* Operation */;
 	while ((n = _next_cigar_OP(cig0, offset, &OP, &OPL))) {
 		if (n == -1)
 			return _get_cigar_parsing_error();
@@ -66,16 +64,13 @@ static const char *Ltrim_along_ref(SEXP cigar_string,
 static const char *Rtrim_along_ref(SEXP cigar_string,
 				   int *Rnpos, int *Roffset)
 {
-	const char *cig0;
-	int offset, n, OPL /* Operation Length */;
-	char OP /* Operation */;
-
 	if (cigar_string == NA_STRING)
 		return "CIGAR string is NA";
 	if (LENGTH(cigar_string) == 0)
 		return "CIGAR string is empty";
-	cig0 = CHAR(cigar_string);
-	offset = LENGTH(cigar_string);
+	const char *cig0 = CHAR(cigar_string);
+	int n, offset = LENGTH(cigar_string), OPL /* Operation Length */;
+	char OP /* Operation */;
 	while ((n = _prev_cigar_OP(cig0, offset, &OP, &OPL))) {
 		if (n == -1)
 			return _get_cigar_parsing_error();
@@ -119,19 +114,15 @@ static const char *Rtrim_along_ref(SEXP cigar_string,
 static const char *trim_along_ref(SEXP cigar_string,
 		int Lnpos, int Rnpos, char *cigar_buf, int *rshift)
 {
-	int Loffset, Roffset, buf_offset;
-	const char *cig0;
-	int offset, n, OPL /* Operation Length */, ret;
-	char OP /* Operation */;
-	const char *errmsg;
-	size_t size;
-
 	//Rprintf("trim_along_ref():\n");
-	errmsg = Ltrim_along_ref(cigar_string, &Lnpos, &Loffset, rshift);
+	int Loffset;
+	const char *errmsg =
+		Ltrim_along_ref(cigar_string, &Lnpos, &Loffset, rshift);
 	if (errmsg != NULL)
 		return errmsg;
 	//Rprintf("  Lnpos=%d Loffset=%d *rshift=%d\n",
 	//	Lnpos, Loffset, *rshift);
+	int Roffset;
 	errmsg = Rtrim_along_ref(cigar_string, &Rnpos, &Roffset);
 	if (errmsg != NULL)
 		return errmsg;
@@ -141,9 +132,11 @@ static const char *trim_along_ref(SEXP cigar_string,
 			 "CIGAR is empty after trimming");
 		return errmsg_buf;
 	}
-	buf_offset = 0;
-	cig0 = CHAR(cigar_string);
-	for (offset = Loffset; offset <= Roffset; offset += n) {
+	int buf_offset = 0, n;
+	const char *cig0 = CHAR(cigar_string);
+	for (int offset = Loffset; offset <= Roffset; offset += n) {
+		char OP /* Operation */;
+		int OPL /* Operation Length */;
 		n = _next_cigar_OP(cig0, offset, &OP, &OPL);
 		if (offset == Loffset)
 			OPL -= Lnpos;
@@ -154,8 +147,9 @@ static const char *trim_along_ref(SEXP cigar_string,
 				 "CIGAR is empty after trimming");
 			return errmsg_buf;
 		}
-		size = CIGAR_BUF_LENGTH - buf_offset;
-		ret = snprintf(cigar_buf + buf_offset, size, "%d%c", OPL, OP);
+		size_t size = CIGAR_BUF_LENGTH - buf_offset;
+		int ret = snprintf(cigar_buf + buf_offset, size,
+				   "%d%c", OPL, OP);
 		if (ret >= size) {
 			snprintf(errmsg_buf, sizeof(errmsg_buf),
 				 "'cigar_buf' overflow");
@@ -169,35 +163,32 @@ static const char *trim_along_ref(SEXP cigar_string,
 /* --- .Call ENTRY POINT --- */
 SEXP C_trim_cigars_along_ref(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
 {
-	SEXP ans, trimmed_cigars, trimmed_string, ans_rshift, cigar_string;
-	int ncigars, i;
 	static char cigar_buf[CIGAR_BUF_LENGTH];
-	const char *errmsg;
 
-	ncigars = LENGTH(cigars);
-	PROTECT(trimmed_cigars = NEW_CHARACTER(ncigars));
-	PROTECT(ans_rshift = NEW_INTEGER(ncigars));
-	for (i = 0; i < ncigars; i++) {
-		cigar_string = STRING_ELT(cigars, i);
+	int ncigars = LENGTH(cigars);
+	SEXP trimmed_cigars = PROTECT(NEW_CHARACTER(ncigars));
+	SEXP ans_rshift = PROTECT(NEW_INTEGER(ncigars));
+	for (int i = 0; i < ncigars; i++) {
+		SEXP cigar_string = STRING_ELT(cigars, i);
 		if (cigar_string == NA_STRING) {
 			SET_STRING_ELT(trimmed_cigars, i, NA_STRING);
 			INTEGER(ans_rshift)[i] = NA_INTEGER;
 			continue;
 		}
-		errmsg = trim_along_ref(cigar_string,
-				INTEGER(Lnpos)[i],
-				INTEGER(Rnpos)[i],
-				cigar_buf, INTEGER(ans_rshift) + i);
+		const char *errmsg = trim_along_ref(cigar_string,
+					INTEGER(Lnpos)[i],
+					INTEGER(Rnpos)[i],
+					cigar_buf, INTEGER(ans_rshift) + i);
 		if (errmsg != NULL) {
 			UNPROTECT(2);
 			error("in 'cigars[%d]': %s", i + 1, errmsg);
 		}
-		PROTECT(trimmed_string = mkChar(cigar_buf));
+		SEXP trimmed_string = PROTECT(mkChar(cigar_buf));
 		SET_STRING_ELT(trimmed_cigars, i, trimmed_string);
 		UNPROTECT(1);
 	}
 
-	PROTECT(ans = NEW_LIST(2));
+	SEXP ans = PROTECT(NEW_LIST(2));
 	SET_VECTOR_ELT(ans, 0, trimmed_cigars);
 	SET_VECTOR_ELT(ans, 1, ans_rshift);
 	UNPROTECT(3);
@@ -212,16 +203,14 @@ SEXP C_trim_cigars_along_ref(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
 static const char *Ltrim_along_query(SEXP cigar_string,
 				     int *Lnpos, int *Loffset, int *rshift)
 {
-	const char *cig0;
-	int offset, n, OPL /* Operation Length */;
-	char OP /* Operation */;
-
 	if (cigar_string == NA_STRING)
 		return "CIGAR string is NA";
 	if (LENGTH(cigar_string) == 0)
 		return "CIGAR string is empty";
-	cig0 = CHAR(cigar_string);
-	*rshift = offset = 0;
+	const char *cig0 = CHAR(cigar_string);
+	*rshift = 0;
+	int n, offset = 0, OPL /* Operation Length */;
+	char OP /* Operation */;
 	while ((n = _next_cigar_OP(cig0, offset, &OP, &OPL))) {
 		if (n == -1)
 			return _get_cigar_parsing_error();
@@ -266,16 +255,13 @@ static const char *Ltrim_along_query(SEXP cigar_string,
 static const char *Rtrim_along_query(SEXP cigar_string,
 				     int *Rnpos, int *Roffset)
 {
-	const char *cig0;
-	int offset, n, OPL /* Operation Length */;
-	char OP /* Operation */;
-
 	if (cigar_string == NA_STRING)
 		return "CIGAR string is NA";
 	if (LENGTH(cigar_string) == 0)
 		return "CIGAR string is empty";
-	cig0 = CHAR(cigar_string);
-	offset = LENGTH(cigar_string);
+	const char *cig0 = CHAR(cigar_string);
+	int n, offset = LENGTH(cigar_string), OPL /* Operation Length */;
+	char OP /* Operation */;
 	while ((n = _prev_cigar_OP(cig0, offset, &OP, &OPL))) {
 		if (n == -1)
 			return _get_cigar_parsing_error();
@@ -309,19 +295,15 @@ static const char *Rtrim_along_query(SEXP cigar_string,
 static const char *trim_along_query(SEXP cigar_string,
 		int Lnpos, int Rnpos, char *cigar_buf, int *rshift)
 {
-	int Loffset, Roffset, buf_offset;
-	const char *cig0;
-	int offset, n, OPL /* Operation Length */, ret;
-	char OP /* Operation */;
-	const char *errmsg;
-	size_t size;
-
 	//Rprintf("trim_along_query():\n");
-	errmsg = Ltrim_along_query(cigar_string, &Lnpos, &Loffset, rshift);
+	int Loffset;
+	const char *errmsg =
+		Ltrim_along_query(cigar_string, &Lnpos, &Loffset, rshift);
 	if (errmsg != NULL)
 		return errmsg;
 	//Rprintf("  Lnpos=%d Loffset=%d *rshift=%d\n",
 	//	Lnpos, Loffset, *rshift);
+	int Roffset;
 	errmsg = Rtrim_along_query(cigar_string, &Rnpos, &Roffset);
 	if (errmsg != NULL)
 		return errmsg;
@@ -331,9 +313,11 @@ static const char *trim_along_query(SEXP cigar_string,
 			 "CIGAR is empty after trimming");
 		return errmsg_buf;
 	}
-	buf_offset = 0;
-	cig0 = CHAR(cigar_string);
-	for (offset = Loffset; offset <= Roffset; offset += n) {
+	int buf_offset = 0, n;
+	const char *cig0 = CHAR(cigar_string);
+	for (int offset = Loffset; offset <= Roffset; offset += n) {
+		char OP /* Operation */;
+		int OPL /* Operation Length */;
 		n = _next_cigar_OP(cig0, offset, &OP, &OPL);
 		if (offset == Loffset)
 			OPL -= Lnpos;
@@ -344,8 +328,9 @@ static const char *trim_along_query(SEXP cigar_string,
 				 "CIGAR is empty after trimming");
 			return errmsg_buf;
 		}
-		size = CIGAR_BUF_LENGTH - buf_offset;
-		ret = snprintf(cigar_buf + buf_offset, size, "%d%c", OPL, OP);
+		size_t size = CIGAR_BUF_LENGTH - buf_offset;
+		int ret = snprintf(cigar_buf + buf_offset, size,
+				   "%d%c", OPL, OP);
 		if (ret >= size) {
 			snprintf(errmsg_buf, sizeof(errmsg_buf),
 				 "'cigar_buf' overflow");
@@ -364,35 +349,32 @@ static const char *trim_along_query(SEXP cigar_string,
         of a SAM/BAM file as a consequence of this trimming. */
 SEXP C_trim_cigars_along_query(SEXP cigars, SEXP Lnpos, SEXP Rnpos)
 {
-	SEXP ans, trimmed_cigars, trimmed_string, ans_rshift, cigar_string;
-	int ncigars, i;
 	static char cigar_buf[CIGAR_BUF_LENGTH];
-	const char *errmsg;
 
-	ncigars = LENGTH(cigars);
-	PROTECT(trimmed_cigars = NEW_CHARACTER(ncigars));
-	PROTECT(ans_rshift = NEW_INTEGER(ncigars));
-	for (i = 0; i < ncigars; i++) {
-		cigar_string = STRING_ELT(cigars, i);
+	int ncigars = LENGTH(cigars);
+	SEXP trimmed_cigars = PROTECT(NEW_CHARACTER(ncigars));
+	SEXP ans_rshift = PROTECT(NEW_INTEGER(ncigars));
+	for (int i = 0; i < ncigars; i++) {
+		SEXP cigar_string = STRING_ELT(cigars, i);
 		if (cigar_string == NA_STRING) {
 			SET_STRING_ELT(trimmed_cigars, i, NA_STRING);
 			INTEGER(ans_rshift)[i] = NA_INTEGER;
 			continue;
 		}
-		errmsg = trim_along_query(cigar_string,
-				INTEGER(Lnpos)[i],
-				INTEGER(Rnpos)[i],
-				cigar_buf, INTEGER(ans_rshift) + i);
+		const char *errmsg = trim_along_query(cigar_string,
+					INTEGER(Lnpos)[i],
+					INTEGER(Rnpos)[i],
+					cigar_buf, INTEGER(ans_rshift) + i);
 		if (errmsg != NULL) {
 			UNPROTECT(2);
 			error("in 'cigars[%d]': %s", i + 1, errmsg);
 		}
-		PROTECT(trimmed_string = mkChar(cigar_buf));
+		SEXP trimmed_string = PROTECT(mkChar(cigar_buf));
 		SET_STRING_ELT(trimmed_cigars, i, trimmed_string);
 		UNPROTECT(1);
 	}
 
-	PROTECT(ans = NEW_LIST(2));
+	SEXP ans = PROTECT(NEW_LIST(2));
 	SET_VECTOR_ELT(ans, 0, trimmed_cigars);
 	SET_VECTOR_ELT(ans, 1, ans_rshift);
 	UNPROTECT(3);

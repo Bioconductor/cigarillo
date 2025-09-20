@@ -52,16 +52,3 @@ cigars_as_RleList <- function(cigars)
     relist(ans_flesh, ans_skeleton)
 }
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### tabulate_cigar_ops()
-###
-
-tabulate_cigar_ops <- function(cigars)
-{
-    cigars <- normarg_cigars(cigars)
-    ans <- cigarillo.Call("C_tabulate_cigar_ops", cigars)
-    stopifnot(identical(CIGAR_OPS, colnames(ans)))  # sanity check
-    ans
-}
-

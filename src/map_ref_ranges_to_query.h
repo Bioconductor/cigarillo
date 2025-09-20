@@ -6,7 +6,7 @@
 SEXP C_map_ref_ranges_to_query(
 	SEXP start,
 	SEXP end,
-	SEXP cigar,
+	SEXP cigars,
 	SEXP lmmpos
 );
 

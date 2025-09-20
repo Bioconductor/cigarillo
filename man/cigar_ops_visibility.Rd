@@ -75,6 +75,12 @@ cigar_ops_visibility(ops=CIGAR_OPS)
 
 \seealso{
   \itemize{
+    \item \link{inspect_cigars} for basic utility functions to parse
+          and inspect CIGAR strings.
+
+    \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
+           operations in a vector of CIGAR strings.
+
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
           the alignment that it describes.
@@ -86,13 +92,11 @@ cigar_ops_visibility(ops=CIGAR_OPS)
     \item \link{cigars_as_ranges} to turn CIGAR strings into ranges
           of positions.
 
-    \item \link{project_positions} to project positions from query to
-          reference space and vice versa.
+    \item \code{\link{project_positions}} to project positions from query
+          to reference space and vice versa.
 
-    \item \link{project_sequences} to project sequences from one space
-          to the other.
-
-    \item The \link[IRanges]{RleList} class in the \pkg{IRanges} package.
+    \item \code{\link{project_sequences}} to project sequences from one
+          space to the other.
   }
 }
 

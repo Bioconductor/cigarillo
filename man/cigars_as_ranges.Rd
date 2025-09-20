@@ -35,7 +35,7 @@ cigars_as_ranges_along_pwa(cigars,
 
 \arguments{
   \item{cigars}{
-    A character vector or factor containing CIGAR strings.
+    A character vector (or factor) containing CIGAR strings.
   }
   \item{N.regions.removed}{
     \code{TRUE} or \code{FALSE}.
@@ -160,11 +160,14 @@ cigars_as_ranges_along_pwa(cigars,
 
 \seealso{
   \itemize{
-    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+    \item \code{\link{cigar_ops_visibility}} for an introduction to CIGAR
           operations and their visibility in various "projection spaces".
 
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
+
+    \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
+           operations in a vector of CIGAR strings.
 
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
@@ -174,11 +177,11 @@ cigars_as_ranges_along_pwa(cigars,
           \code{\link{trim_cigars_along_query}} to trim CIGAR strings
           along the "reference space" and "query space", respectively.
 
-    \item \link{project_positions} to project positions from query to
-          reference space and vice versa.
+    \item \code{\link{project_positions}} to project positions from query
+          to reference space and vice versa.
 
-    \item \link{project_sequences} to project sequences from one space
-          to the other.
+    \item \code{\link{project_sequences}} to project sequences from one
+          space to the other.
 
     \item The \link[IRanges]{IRanges} and \link[IRanges]{IRangesList}
           classes in the \pkg{IRanges} package.

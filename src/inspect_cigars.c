@@ -7,7 +7,6 @@
 
 static char errmsg_buf[200];
 
-
 const char *_get_cigar_parsing_error()
 {
 	return errmsg_buf;
@@ -139,33 +138,33 @@ static const char *parse_cigar(const char *cigar_string)
 
 /* --- .Call ENTRY POINT ---
    Args:
-     cigar: character vector containing the extended CIGAR string for each
-            read;
+     cigars: character vector containing the extended CIGAR string for each
+             read;
      ans_type: a single integer specifying the type of answer to return:
        0: 'ans' is a string describing the first validity failure or NULL;
        1: 'ans' is logical vector with TRUE values for valid elements
-          in 'cigar'. */
-SEXP C_validate_cigars(SEXP cigar, SEXP ans_type)
+          in 'cigars'. */
+SEXP C_validate_cigars(SEXP cigars, SEXP ans_type)
 {
-	SEXP ans, cigar_elt;
-	int cigar_len, ans_type0, i;
+	SEXP ans;
+	int ncigars, ans_type0, i;
 	const char *cigar_string, *errmsg;
 	char string_buf[200];
 
-	cigar_len = LENGTH(cigar);
+	ncigars = LENGTH(cigars);
 	ans_type0 = INTEGER(ans_type)[0];
 	if (ans_type0 == 1)
-		PROTECT(ans = NEW_LOGICAL(cigar_len));
+		PROTECT(ans = NEW_LOGICAL(ncigars));
 	else
 		ans = R_NilValue;
-	for (i = 0; i < cigar_len; i++) {
-		cigar_elt = STRING_ELT(cigar, i);
-		if (cigar_elt == NA_STRING) {
+	for (i = 0; i < ncigars; i++) {
+		SEXP cigars_elt = STRING_ELT(cigars, i);
+		if (cigars_elt == NA_STRING) {
 			if (ans_type0 == 1)
 				LOGICAL(ans)[i] = 1;
 			continue;
 		}
-		cigar_string = CHAR(cigar_elt);
+		cigar_string = CHAR(cigars_elt);
 		if (strcmp(cigar_string, "*") == 0) {
 			if (ans_type0 == 1)
 				LOGICAL(ans)[i] = 1;
@@ -220,48 +219,48 @@ static const char *split_cigar_string(const char *cigar_string,
  *   - C_explode_cigar_ops()
  *   - C_explode_cigar_oplens()
  * Args:
- *   cigar: character vector containing the extended CIGAR strings to
- *          explode.
- *   ops:   NULL or a character vector containing the CIGAR operations to
- *          actually consider. If NULL, then all CIGAR operations are
- *          considered.
- * Both functions return a list of the same length as 'cigar' where each
+ *   cigars: character vector containing the extended CIGAR strings to
+ *           explode.
+ *   ops:    NULL or a character vector containing the CIGAR operations to
+ *           actually consider. If NULL, then all CIGAR operations are
+ *           considered.
+ * Both functions return a list of the same length as 'cigars' where each
  * list element is a character vector (for C_explode_cigar_ops()) or an integer
  * vector (for C_explode_cigar_oplens()). The 2 lists have the same shape,
  * that is, same length() and same elementNROWS(). The i-th character vector
  * in the list returned by C_explode_cigar_ops() contains one single-letter
- * string per CIGAR operation in 'cigar[i]'. The i-th integer vector in the
+ * string per CIGAR operation in 'cigars[i]'. The i-th integer vector in the
  * list returned by C_explode_cigar_oplens() contains the corresponding
  * CIGAR operation lengths. Zero-length operations or operations not listed
  * in 'ops' are ignored.
  */
-SEXP C_explode_cigar_ops(SEXP cigar, SEXP ops)
+SEXP C_explode_cigar_ops(SEXP cigars, SEXP ops)
 {
-	SEXP ans, cigar_elt, ans_elt, ans_elt_elt;
-	int cigar_len, ans_elt_len, i, j;
+	SEXP ans, ans_elt, ans_elt_elt;
+	int ncigars, ans_elt_len, i, j;
 	CharAE *OPbuf;
 	const char *cigar_string, *errmsg;
 
-	cigar_len = LENGTH(cigar);
+	ncigars = LENGTH(cigars);
 	_init_ops_lkup_table(ops);
-	PROTECT(ans = NEW_LIST(cigar_len));
+	PROTECT(ans = NEW_LIST(ncigars));
 	OPbuf = new_CharAE(0);
-	for (i = 0; i < cigar_len; i++) {
-		cigar_elt = STRING_ELT(cigar, i);
-		if (cigar_elt == NA_STRING) {
+	for (i = 0; i < ncigars; i++) {
+		SEXP cigars_elt = STRING_ELT(cigars, i);
+		if (cigars_elt == NA_STRING) {
 			UNPROTECT(1);
-			error("'cigar[%d]' is NA", i + 1);
+			error("'cigars[%d]' is NA", i + 1);
 		}
-		cigar_string = CHAR(cigar_elt);
+		cigar_string = CHAR(cigars_elt);
 		if (strcmp(cigar_string, "*") == 0) {
 			UNPROTECT(1);
-			error("'cigar[%d]' is \"*\"", i + 1);
+			error("'cigars[%d]' is \"*\"", i + 1);
 		}
 		CharAE_set_nelt(OPbuf, 0);
 		errmsg = split_cigar_string(cigar_string, OPbuf, NULL);
 		if (errmsg != NULL) {
 			UNPROTECT(1);
-			error("in 'cigar[%d]': %s", i + 1, errmsg);
+			error("in 'cigars[%d]': %s", i + 1, errmsg);
 		}
 		ans_elt_len = CharAE_get_nelt(OPbuf);
 		PROTECT(ans_elt = NEW_CHARACTER(ans_elt_len));
@@ -277,123 +276,39 @@ SEXP C_explode_cigar_ops(SEXP cigar, SEXP ops)
 	return ans;
 }
 
-SEXP C_explode_cigar_oplens(SEXP cigar, SEXP ops)
+SEXP C_explode_cigar_oplens(SEXP cigars, SEXP ops)
 {
-	SEXP ans, cigar_elt, ans_elt;
-	int cigar_len, i;
+	SEXP ans, ans_elt;
+	int ncigars, i;
 	IntAE *OPLbuf;
 	const char *cigar_string, *errmsg;
 
-	cigar_len = LENGTH(cigar);
+	ncigars = LENGTH(cigars);
 	_init_ops_lkup_table(ops);
-	PROTECT(ans = NEW_LIST(cigar_len));
+	PROTECT(ans = NEW_LIST(ncigars));
 	OPLbuf = new_IntAE(0, 0, 0);
-	for (i = 0; i < cigar_len; i++) {
-		cigar_elt = STRING_ELT(cigar, i);
-		if (cigar_elt == NA_STRING) {
+	for (i = 0; i < ncigars; i++) {
+		SEXP cigars_elt = STRING_ELT(cigars, i);
+		if (cigars_elt == NA_STRING) {
 			UNPROTECT(1);
-			error("'cigar[%d]' is NA", i + 1);
+			error("'cigars[%d]' is NA", i + 1);
 		}
-		cigar_string = CHAR(cigar_elt);
+		cigar_string = CHAR(cigars_elt);
 		if (strcmp(cigar_string, "*") == 0) {
 			UNPROTECT(1);
-			error("'cigar[%d]' is \"*\"", i + 1);
+			error("'cigars[%d]' is \"*\"", i + 1);
 		}
 		IntAE_set_nelt(OPLbuf, 0);
 		errmsg = split_cigar_string(cigar_string, NULL, OPLbuf);
 		if (errmsg != NULL) {
 			UNPROTECT(1);
-			error("in 'cigar[%d]': %s", i + 1, errmsg);
+			error("in 'cigars[%d]': %s", i + 1, errmsg);
 		}
 		PROTECT(ans_elt = new_INTEGER_from_IntAE(OPLbuf));
 		SET_VECTOR_ELT(ans, i, ans_elt);
 		UNPROTECT(1);
 	}
 	UNPROTECT(1);
-	return ans;
-}
-
-
-/****************************************************************************
- * C_tabulate_cigar_ops()
- */
-
-static const char *cigar_string_op_table(SEXP cigar_string, const char *allOPs,
-		int *table_row, int table_nrow)
-{
-	const char *cig0, *tmp;
-	int offset, n, OPL /* Operation Length */;
-	char OP /* Operation */;
-
-	if (cigar_string == NA_STRING)
-		return "CIGAR string is NA";
-	if (LENGTH(cigar_string) == 0)
-		return "CIGAR string is empty";
-	cig0 = CHAR(cigar_string);
-	offset = 0;
-	while ((n = _next_cigar_OP(cig0, offset, &OP, &OPL))) {
-		if (n == -1)
-			return _get_cigar_parsing_error();
-		tmp = strchr(allOPs, (int) OP);
-		if (tmp == NULL) {
-			snprintf(errmsg_buf, sizeof(errmsg_buf),
-				 "unknown CIGAR operation '%c' at char %d",
-				 OP, offset + 1);
-			return errmsg_buf;
-		}
-		*(table_row + (tmp - allOPs) * table_nrow) += OPL;
-		offset += n;
-	}
-	return NULL;
-}
-
-/* --- .Call ENTRY POINT ---
- * Args:
- *   cigar: character vector containing the extended CIGAR string for each
- *          read;
- * Return an integer matrix with the number of rows equal to the length of
- * 'cigar' and 9 columns, one for each extended CIGAR operation containing
- * a frequency count for the operations for each element of 'cigar'.
- */
-SEXP C_tabulate_cigar_ops(SEXP cigar)
-{
-	static const char *allOPs = "MIDNSHP=X";
-
-	SEXP cigar_string, ans, ans_dimnames, ans_colnames;
-	int cigar_len, allOPs_len, i, j, *ans_row;
-	const char *errmsg;
-	char OPstrbuf[2];
-
-	cigar_len = LENGTH(cigar);
-	allOPs_len = strlen(allOPs);
-	PROTECT(ans = allocMatrix(INTSXP, cigar_len, allOPs_len));
-	memset(INTEGER(ans), 0, LENGTH(ans) * sizeof(int));
-	ans_row = INTEGER(ans);
-	for (i = 0, ans_row = INTEGER(ans); i < cigar_len; i++, ans_row++) {
-		cigar_string = STRING_ELT(cigar, i);
-		if (cigar_string == NA_STRING) {
-			INTEGER(ans)[i] = NA_INTEGER;
-			continue;
-		}
-		errmsg = cigar_string_op_table(cigar_string, allOPs,
-				ans_row, cigar_len);
-		if (errmsg != NULL) {
-			UNPROTECT(1);
-			error("in 'cigar[%d]': %s", i + 1, errmsg);
-		}
-	}
-
-	PROTECT(ans_colnames = NEW_CHARACTER(allOPs_len));
-	OPstrbuf[1] = '\0';
-	for (j = 0; j < allOPs_len; j++) {
-		OPstrbuf[0] = allOPs[j];
-		SET_STRING_ELT(ans_colnames, j, mkChar(OPstrbuf));
-	}
-	PROTECT(ans_dimnames = NEW_LIST(2));
-	SET_ELEMENT(ans_dimnames, 0, R_NilValue);
-	SET_ELEMENT(ans_dimnames, 1, ans_colnames);
-	SET_DIMNAMES(ans, ans_dimnames);
-	UNPROTECT(3);
 	return ans;
 }
 

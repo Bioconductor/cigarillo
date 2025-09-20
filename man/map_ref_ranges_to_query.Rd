@@ -27,7 +27,7 @@ fast_map_ref_ranges_to_query(start, end, cigars, lmmpos,
     two vectors are expected to be relative to the "reference space".
   }
   \item{cigars}{
-    A character vector or factor containing CIGAR strings.
+    A character vector (or factor) containing CIGAR strings.
   }
   \item{lmmpos}{
     An integer vector parallel to \code{cigars}. For each CIGAR string
@@ -78,8 +78,8 @@ fast_map_ref_ranges_to_query(start, end, cigars, lmmpos,
     \item The \code{\link[GenomicAlignments]{mapToAlignments}} methods
           defined in the \pkg{GenomicAlignments} package.
 
-    \item \code{\link{ref_pos_as_query_pos}} to map positions relative
-          to the "reference space" to the "query space".
+    \item \code{\link{ref_pos_as_query_pos}} to project positions that
+          are defined along the "reference space" onto the "query space".
 
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by

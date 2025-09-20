@@ -21,9 +21,9 @@
 /****************************************************************************
  * --- .Call ENTRY POINT ---
  * Args:
- *   start, end:    two parallel integer vectors describing ranges along
- *                  the reference space (input ranges);
- *   cigar, lmmpos: two parallel vectors (one character, one integer).
+ *   start, end:     two parallel integer vectors describing ranges along
+ *                   the reference space (input ranges);
+ *   cigars, lmmpos: two parallel vectors (one character, one integer).
  * Returns a list of length four that describes the hits between the input
  * ranges and the cigar/lmmpos pairs. All list elements are parallel integer
  * vectors of length N, where N is the number of hits.
@@ -36,21 +36,21 @@
  * pair if it's a valid range within the extent of the corresponding
  * alignment along the reference space.
  */
-SEXP C_map_ref_ranges_to_query(SEXP start, SEXP end, SEXP cigar, SEXP lmmpos)
+SEXP C_map_ref_ranges_to_query(SEXP start, SEXP end, SEXP cigars, SEXP lmmpos)
 {
 	SEXP ans, ans_start, ans_end, ans_qhits, ans_shits;
 	IntAE *sbuf, *ebuf, *qhbuf, *shbuf;
 	int i, j, s, e;
 	int nranges = LENGTH(start);
-	int ncigar = LENGTH(cigar);
+	int ncigars = LENGTH(cigars);
 
 	sbuf = new_IntAE(0, 0, 0);
 	ebuf = new_IntAE(0, 0, 0);
 	qhbuf = new_IntAE(0, 0, 0);
 	shbuf = new_IntAE(0, 0, 0);
 	for (i = 0; i < nranges; i++) {
-		for (j = 0; j < ncigar; j++) {
-			const char *cig_j = CHAR(STRING_ELT(cigar, j));
+		for (j = 0; j < ncigars; j++) {
+			const char *cig_j = CHAR(STRING_ELT(cigars, j));
 			int pos_j = INTEGER(lmmpos)[j];
 			s = _to_query(INTEGER(start)[i], cig_j, pos_j, FALSE);
 			if (s == NA_INTEGER)

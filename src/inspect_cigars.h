@@ -24,21 +24,19 @@ void _init_ops_lkup_table(SEXP ops);
 int _is_in_ops(char OP);
 
 SEXP C_validate_cigars(
-	SEXP cigar,
+	SEXP cigars,
 	SEXP ans_type
 );
 
 SEXP C_explode_cigar_ops(
-	SEXP cigar,
+	SEXP cigars,
 	SEXP ops
 );
 
 SEXP C_explode_cigar_oplens(
-	SEXP cigar,
+	SEXP cigars,
 	SEXP ops
 );
-
-SEXP C_tabulate_cigar_ops(SEXP cigar);
 
 #endif  /* _INSPECT_CIGARS_H_ */
 

@@ -6,7 +6,7 @@ Description: CIGAR stands for Concise Idiosyncratic Gapped Alignment Report.
 	The cigarillo package provides functions to parse and inspect CIGAR
 	strings, trim them, turn them into ranges of positions relative to
 	the "query space" or "reference space", and project positions or
-	sequences from one space onto the other. Note that these operations
+	sequences from one space to the other. Note that these operations
 	are low-level operations that the user rarely needs to perform
 	directly. More typically, they are performed behind the scene by
 	higher-level functionality implemented in other packages like
@@ -14,7 +14,7 @@ Description: CIGAR stands for Concise Idiosyncratic Gapped Alignment Report.
 biocViews: Infrastructure, Alignment, SequenceMatching, Sequencing
 URL: https://bioconductor.org/packages/cigarillo
 BugReports: https://github.com/Bioconductor/cigarillo/issues
-Version: 0.1.1
+Version: 0.6.0
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(
@@ -30,12 +30,14 @@ Authors@R: c(
 Depends: methods, BiocGenerics, S4Vectors (>= 0.47.2), IRanges, Biostrings
 Imports: stats
 LinkingTo: S4Vectors, IRanges
-Suggests: GenomicAlignments, RNAseqData.HNRNPC.bam.chr14,
-	BSgenome.Hsapiens.UCSC.hg19, testthat
+Suggests: Rsamtools, GenomicAlignments, RNAseqData.HNRNPC.bam.chr14,
+	BSgenome.Hsapiens.UCSC.hg19, testthat, knitr, rmarkdown, BiocStyle
+VignetteBuilder: knitr
 Collate:
 	utils.R
 	cigar_ops_visibility.R
 	inspect-cigars.R
+	tabulate_cigar_ops.R
 	cigar_extent.R
 	trim_cigars.R
 	cigars_as_ranges.R

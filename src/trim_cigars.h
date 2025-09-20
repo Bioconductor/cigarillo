@@ -4,13 +4,13 @@
 #include <Rdefines.h>
 
 SEXP C_trim_cigars_along_ref(
-	SEXP cigar,
+	SEXP cigars,
 	SEXP Lnpos,
 	SEXP Rnpos
 );
 
 SEXP C_trim_cigars_along_query(
-	SEXP cigar,
+	SEXP cigars,
 	SEXP Lnpos,
 	SEXP Rnpos
 );

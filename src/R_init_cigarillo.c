@@ -2,6 +2,7 @@
 
 #include "cigar_ops_visibility.h"
 #include "inspect_cigars.h"
+#include "tabulate_cigar_ops.h"
 #include "cigar_extent.h"
 #include "trim_cigars.h"
 #include "cigars_as_ranges.h"
@@ -19,7 +20,9 @@ static const R_CallMethodDef callMethods[] = {
 	CALLMETHOD_DEF(C_validate_cigars, 2),
 	CALLMETHOD_DEF(C_explode_cigar_ops, 2),
 	CALLMETHOD_DEF(C_explode_cigar_oplens, 2),
-	CALLMETHOD_DEF(C_tabulate_cigar_ops, 1),
+
+/* tabulate_cigar_ops.c */
+	CALLMETHOD_DEF(C_tabulate_cigar_ops, 2),
 
 /* cigar_extent.c */
 	CALLMETHOD_DEF(C_cigar_extent, 3),

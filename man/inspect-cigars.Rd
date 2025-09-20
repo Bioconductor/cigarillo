@@ -8,7 +8,6 @@
 \alias{explode_cigar_ops}
 \alias{explode_cigar_oplens}
 \alias{cigars_as_RleList}
-\alias{tabulate_cigar_ops}
 
 \title{Inspect CIGAR strings}
 
@@ -19,14 +18,13 @@
 \usage{
 explode_cigar_ops(cigars, ops=CIGAR_OPS)
 explode_cigar_oplens(cigars, ops=CIGAR_OPS)
-cigars_as_RleList(cigars)
 
-tabulate_cigar_ops(cigars)
+cigars_as_RleList(cigars)
 }
 
 \arguments{
   \item{cigars}{
-    A character vector or factor containing CIGAR strings.
+    A character vector (or factor) containing CIGAR strings.
   }
   \item{ops}{
     Character vector where the elements are single letters representing
@@ -53,18 +51,17 @@ tabulate_cigar_ops(cigars)
   in \code{ops} and 0-length operations are ignored.
 
   For \code{cigars_as_RleList}: An \link[IRanges]{RleList} object.
-
-  For \code{tabulate_cigar_ops}: An integer matrix with number of rows equal
-  to the length of \code{cigars} and nine columns, one for each extended
-  CIGAR operation.
 }
 
 \author{Hervé Pagès, Martin Morgan, and Patrick Aboyoun}
 
 \seealso{
   \itemize{
-    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+    \item \code{\link{cigar_ops_visibility}} for an introduction to CIGAR
           operations and their visibility in various "projection spaces".
+
+    \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
+           operations in a vector of CIGAR strings.
 
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
@@ -77,11 +74,11 @@ tabulate_cigar_ops(cigars)
     \item \link{cigars_as_ranges} to turn CIGAR strings into ranges
           of positions.
 
-    \item \link{project_positions} to project positions from query to
-          reference space and vice versa.
+    \item \code{\link{project_positions}} to project positions from query
+          to reference space and vice versa.
 
-    \item \link{project_sequences} to project sequences from one space
-          to the other.
+    \item \code{\link{project_sequences}} to project sequences from one
+          space to the other.
 
     \item The \link[IRanges]{RleList} class in the \pkg{IRanges} package.
   }
@@ -100,12 +97,9 @@ explode_cigar_oplens(my_cigars, ops=c("I", "S"))
 
 cigars_as_RleList(my_cigars)
 
-## The RleList object returned by cigars_as_RleList() can be coerced
-## to CharacterList:
+## Note that the RleList object returned by cigars_as_RleList() can
+## be coerced to CharacterList:
 as(cigars_as_RleList(my_cigars), "CharacterList")
-
-## Tabulate CIGAR operations:
-tabulate_cigar_ops(my_cigars)
 }
 
 \keyword{manip}

@@ -87,11 +87,14 @@ ref_pos_as_query_pos(ref_pos, cigars, lmmpos, narrow.left)
 
 \seealso{
   \itemize{
-    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+    \item \code{\link{cigar_ops_visibility}} for an introduction to CIGAR
           operations and their visibility in various "projection spaces".
 
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
+
+    \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
+           operations in a vector of CIGAR strings.
 
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
@@ -104,8 +107,8 @@ ref_pos_as_query_pos(ref_pos, cigars, lmmpos, narrow.left)
     \item \link{cigars_as_ranges} to turn CIGAR strings into ranges
           of positions.
 
-    \item \link{project_sequences} to project sequences from one space
-          to the other.
+    \item \code{\link{project_sequences}} to project sequences from one
+          space to the other.
   }
 }
 

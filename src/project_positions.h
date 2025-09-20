@@ -19,14 +19,14 @@ int _to_query(
 
 SEXP C_query_pos_as_ref_pos(
 	SEXP query_pos,
-	SEXP cigar,
+	SEXP cigars,
 	SEXP lmmpos,
 	SEXP narrow_left
 );
 
 SEXP C_ref_pos_as_query_pos(
 	SEXP ref_pos,
-	SEXP cigar,
+	SEXP cigars,
 	SEXP lmmpos,
 	SEXP narrow_left
 );

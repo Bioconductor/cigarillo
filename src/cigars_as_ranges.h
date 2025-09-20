@@ -4,9 +4,9 @@
 #include <Rdefines.h>
 
 SEXP C_cigars_as_ranges(
-	SEXP cigar,
+	SEXP cigars,
 	SEXP space,
-	SEXP flag,
+	SEXP flags,
 	SEXP lmmpos,
 	SEXP f,
 	SEXP ops,

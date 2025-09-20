@@ -78,11 +78,14 @@ project_sequences(x, cigars, from="query", to="reference",
 
 \seealso{
   \itemize{
-    \item \link{cigar_ops_visibility} for an introduction to CIGAR
+    \item \code{\link{cigar_ops_visibility}} for an introduction to CIGAR
           operations and their visibility in various "projection spaces".
 
     \item \link{inspect_cigars} for basic utility functions to parse
           and inspect CIGAR strings.
+
+    \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
+           operations in a vector of CIGAR strings.
 
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by
@@ -95,8 +98,8 @@ project_sequences(x, cigars, from="query", to="reference",
     \item \link{cigars_as_ranges} to turn CIGAR strings into ranges
           of positions.
 
-    \item \link{project_positions} to project positions from query to
-          reference space and vice versa.
+    \item \code{\link{project_positions}} to project positions from query
+          to reference space and vice versa.
 
     \item The \code{\link[GenomicAlignments]{stackStringsFromBam}} function
           in the \pkg{GenomicAlignments} package for stacking the read

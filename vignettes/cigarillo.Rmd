@@ -1,0 +1,99 @@
+---
+title: "The _cigarillo_ package"
+author:
+- name: Hervé Pagès
+  affiliation: Fred Hutch Cancer Center, Seattle, WA
+date: "Compiled `r BiocStyle::doc_date()`; Modified 20 September 2025"
+package: cigarillo
+vignette: |
+  %\VignetteIndexEntry{The cigarillo package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::html_document
+---
+
+```{r setup, include=FALSE}
+library(BiocStyle)
+library(cigarillo)
+library(Rsamtools)
+library(GenomicAlignments)
+library(RNAseqData.HNRNPC.bam.chr14)
+```
+
+
+# Introduction
+
+
+CIGAR stands for Concise Idiosyncratic Gapped Alignment Report.
+CIGAR strings are found in the SAM/BAM files produced by most
+aligners and in the AIRR-formatted output produced by IgBLAST.
+
+`r Biocpkg("cigarillo")` is an R/Bioconductor infrastructure package
+that provides functions to parse and inspect CIGAR strings, trim them,
+turn them into ranges of positions relative to the "query space"
+or "reference space", and project positions or sequences from
+one space to the other.
+
+Note that these operations are low-level operations that the user
+rarely needs to perform directly. More typically, they are performed
+behind the scene by higher-level functionality implemented in other
+packages like Bioconductor packages `r Biocpkg("GenomicAlignments")`
+and `r Biocpkg("igblastr")`.
+
+
+# Install and load the package
+
+
+Like any Bioconductor package, `r Biocpkg("cigarillo")` should be installed
+with `BiocManager::install()`:
+```{r install, eval=FALSE}
+if (!require("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("cigarillo")
+```
+
+`BiocManager::install()` will take care of installing the package
+dependencies that are missing.
+
+Load the package:
+```{r load, message=FALSE}
+library(cigarillo)
+```
+
+
+# Inspect CIGAR strings
+
+
+The package provides basic utility functions to parse and inspect
+CIGAR strings:
+```{r}
+my_cigars <- c("60M", "37M3D22M", "105M41N69M", "40M7I28M2S")
+explode_cigar_ops(my_cigars)
+explode_cigar_oplens(my_cigars)
+```
+
+Let's load aligned reads from a BAM file:
+```{r}
+library(RNAseqData.HNRNPC.bam.chr14)
+bamfile <- RNAseqData.HNRNPC.bam.chr14_BAMFILES[1]
+
+library(Rsamtools)
+library(GenomicAlignments)
+param <- ScanBamParam(which=GRanges("chr14", IRanges(1, 25000000)))
+gal <- readGAlignments(bamfile, param=param)
+gal
+```
+
+See `?inspect_cigars` for more information.
+
+
+# Session information
+
+
+Here is the output of `sessionInfo()` on the system on which this document
+was compiled:
+```{r}
+sessionInfo()
+```
+
