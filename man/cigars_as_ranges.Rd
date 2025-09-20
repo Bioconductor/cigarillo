@@ -47,8 +47,8 @@ cigars_as_ranges_along_pwa(cigars,
     have been removed.
   }
   \item{flags}{
-    \code{NULL} or an integer vector containing the SAM flag for
-    each read.
+    \code{NULL} or an integer vector parallel to \code{cigars} that
+    contains the SAM/BAM flags corresponding to each CIGAR string.
 
     According to the SAM Spec v1.4, flag bit 0x4 is the only reliable place
     to tell whether a segment (or read) is mapped (bit is 0) or not (bit
@@ -64,11 +64,11 @@ cigars_as_ranges_along_pwa(cigars,
     the 1-based leftmost positions/coordinates of each (eventually clipped)
     query sequence with respect to the subject.
 
-    \code{lmmpos} must be a single integer, or a vector of integers of the
-    same length as \code{cigars}.
+    \code{lmmpos} must be a single integer, or an integer vector parallel
+    to \code{cigars}.
   }
   \item{f}{
-    \code{NULL} or a factor of length \code{cigars}.
+    \code{NULL} or a factor parallel to \code{cigars}.
 
     If \code{NULL} (the default), then the ranges are grouped by alignment
     i.e. the returned \link[IRanges]{IRangesList} object has 1 list element
@@ -89,23 +89,30 @@ cigars_as_ranges_along_pwa(cigars,
     Only the operations listed in \code{ops} will be turned into ranges.
   }
   \item{drop.empty.ranges}{
+    \code{TRUE} or \code{FALSE}.
+
     Should empty ranges be dropped?
   }
   \item{reduce.ranges}{
+    \code{TRUE} or \code{FALSE}.
+
     Should adjacent ranges coming from the same cigar be merged or not?
     Using \code{TRUE} can significantly reduce the size of the returned
     object.
   }
   \item{with.ops}{
     \code{TRUE} or \code{FALSE}.
+
     Should the returned ranges be named/labeled with their corresponding
-    CIGAR operation?
+    CIGAR operation? Only supported when \code{f} is \code{NULL}.
   }
   \item{with.oplens}{
     \code{TRUE} or \code{FALSE}.
+
     If \code{with.oplens} is \code{TRUE}, then the returned
     \link[IRanges]{IRangesList} object will carry the lengths of the
     CIGAR operations in an inner metadata column named \code{oplen}.
+    Only supported when \code{f} is \code{NULL}.
   }
   \item{before.hard.clipping}{
     \code{TRUE} or \code{FALSE}.
@@ -138,14 +145,15 @@ cigars_as_ranges_along_pwa(cigars,
 
 \value{
   An \link[IRanges]{IRangesList} object (more precisely a
-  \link[IRanges]{CompressedIRangesList} object) with one list element
-  per element in \code{cigars}.
+  \link[IRanges]{CompressedIRangesList} object) with one list
+  element per element in \code{cigars}.
 
   However, if \code{f} is a factor, then the returned
-  \link[IRanges]{IRangesList} object can be a
+  \link[IRanges]{IRangesList} object returned by
+  \code{cigars_as_ranges_along_ref()} is a
   \link[IRanges]{SimpleIRangesList} object (instead of
-  \link[IRanges]{CompressedIRangesList}). In that case it has one list
-  element per level in \code{f}, and is named with those levels.
+  \link[IRanges]{CompressedIRangesList}). In that case it has one
+  list element per level in \code{f}, and is named with those levels.
 }
 
 \author{Hervé Pagès}

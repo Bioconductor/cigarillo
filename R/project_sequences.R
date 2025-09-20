@@ -88,7 +88,7 @@ project_sequences <- function(x, cigars, from="query", to="reference",
                               S.letter="+", H.letter="+")
 {
     if (!is(x, "XStringSet"))
-        stop("'x' must be an XStringSet object")
+        stop(wmsg("'x' must be an XStringSet object"))
     cigars <- normarg_cigars(cigars)
     from <- match.arg(from, PROJECTION_SPACES)
     to <- match.arg(to, PROJECTION_SPACES)
@@ -107,9 +107,9 @@ project_sequences <- function(x, cigars, from="query", to="reference",
     ## and 'H.letter' to be the same.
     if (from != "query" && to == "query-before-hard-clipping" &&
         as.character(S.letter) != as.character(H.letter))
-        stop("'H.letter' must be the same as 'S.letter' ",
-             "when 'from' is not \"query\" and 'to' ",
-             "is \"query-before-hard-clipping\"")
+        stop(wmsg("'H.letter' must be the same as 'S.letter' ",
+                  "when 'from' is not \"query\" and 'to' ",
+                  "is \"query-before-hard-clipping\""))
 
     from <- match(from, PROJECTION_SPACES)
     to <- match(to, PROJECTION_SPACES)

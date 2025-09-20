@@ -11,26 +11,29 @@ cigars_as_ranges <-
 {
     cigars <- normarg_cigars(cigars)
     if (!isSingleNumber(space))
-        stop("'space' must be a single integer")
+        stop(wmsg("'space' must be a single integer"))
     if (!is.integer(space))
         space <- as.integer(space)
     flags <- normarg_flags(flags, cigars)
     lmmpos <- normarg_lmmpos(lmmpos, cigars)
     if (!is.null(f)) {
         if (!is.factor(f))
-            stop("'f' must be NULL or a factor")
+            stop(wmsg("'f' must be NULL or a factor"))
         if (length(f) != length(cigars))
-            stop("'f' must have the same length as 'cigars'")
+            stop(wmsg("'f' must have the same length as 'cigars'"))
     }
     ops <- normarg_ops(ops)
     if (!isTRUEorFALSE(drop.empty.ranges))
-        stop("'drop.empty.ranges' must be TRUE or FALSE")
+        stop(wmsg("'drop.empty.ranges' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(reduce.ranges))
-        stop("'reduce.ranges' must be TRUE or FALSE")
+        stop(wmsg("'reduce.ranges' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(with.ops))
-        stop("'with.ops' must be TRUE or FALSE")
+        stop(wmsg("'with.ops' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(with.oplens))
-        stop("'with.oplens' must be TRUE or FALSE")
+        stop(wmsg("'with.oplens' must be TRUE or FALSE"))
+    if ((with.ops || with.oplens) && !is.null(f))
+        warning(wmsg("arguments 'with.ops' and/or 'with.oplens' were ",
+                     "ignored (they are only supported when 'f' is NULL)"))
     cigarillo.Call("C_cigars_as_ranges",
                    cigars, space, flags, lmmpos, f,
                    ops, drop.empty.ranges, reduce.ranges,
@@ -49,7 +52,7 @@ cigars_as_ranges_along_ref <-
                               with.ops, with.oplens)
     if (is.null(f))
         return(C_ans)
-    compress <- length(C_ans) >= 200L
+    compress <- length(C_ans) >= 1000L
     IRangesList(C_ans, compress=compress)
 }
 

@@ -11,7 +11,7 @@
 select_reference_space <- function(N.regions.removed)
 {
     if (!isTRUEorFALSE(N.regions.removed))
-        stop("'N.regions.removed' must be TRUE or FALSE")
+        stop(wmsg("'N.regions.removed' must be TRUE or FALSE"))
     if (N.regions.removed) {
         space <- 2L  # REFERENCE_N_REGIONS_REMOVED
     } else {
@@ -23,13 +23,13 @@ select_reference_space <- function(N.regions.removed)
 select_query_space <- function(before.hard.clipping, after.soft.clipping)
 {
     if (!isTRUEorFALSE(before.hard.clipping))
-        stop("'before.hard.clipping' must be TRUE or FALSE")
+        stop(wmsg("'before.hard.clipping' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(after.soft.clipping))
-        stop("'after.soft.clipping' must be TRUE or FALSE")
+        stop(wmsg("'after.soft.clipping' must be TRUE or FALSE"))
     if (before.hard.clipping) {
         if (after.soft.clipping)
-            stop("'before.hard.clipping' and 'after.soft.clipping' ",
-                 "cannot both be TRUE")
+            stop(wmsg("'before.hard.clipping' and 'after.soft.clipping' ",
+                      "cannot both be TRUE"))
         space <- 4L  # QUERY_BEFORE_HARD_CLIPPING
     } else if (after.soft.clipping) {
         space <- 5L  # QUERY_AFTER_SOFT_CLIPPING
@@ -42,13 +42,13 @@ select_query_space <- function(before.hard.clipping, after.soft.clipping)
 select_pairwise_space <- function(N.regions.removed, dense)
 {
     if (!isTRUEorFALSE(N.regions.removed))
-        stop("'N.regions.removed' must be TRUE or FALSE")
+        stop(wmsg("'N.regions.removed' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(dense))
-        stop("'dense' must be TRUE or FALSE")
+        stop(wmsg("'dense' must be TRUE or FALSE"))
     if (N.regions.removed) {
         if (dense)
-           stop("'N.regions.removed' and 'dense' ",
-                "cannot both be TRUE")
+           stop(wmsg("'N.regions.removed' and 'dense' ",
+                     "cannot both be TRUE"))
         space <- 7L  # PAIRWISE_N_REGIONS_REMOVED
     } else if (dense) {
         space <- 8L  # PAIRWISE_DENSE
@@ -62,11 +62,11 @@ normarg_flags <- function(flags, cigars)
 {
     if (!is.null(flags)) {
         if (!is.numeric(flags))
-            stop("'flags' must be NULL or a vector of integers")
+            stop(wmsg("'flags' must be NULL or a vector of integers"))
         if (!is.integer(flags))
             flags <- as.integer(flags)
         if (length(cigars) != length(flags))
-            stop("'cigars' and 'flags' must have the same length")
+            stop(wmsg("'cigars' and 'flags' must have the same length"))
     }
     flags
 }
@@ -81,7 +81,7 @@ normarg_flags <- function(flags, cigars)
     cigars <- normarg_cigars(cigars)
     flags <- normarg_flags(flags, cigars)
     if (!isSingleNumber(space))
-        stop("'space' must be a single integer")
+        stop(wmsg("'space' must be a single integer"))
     if (!is.integer(space))
         space <- as.integer(space)
     cigarillo.Call("C_cigar_extent", cigars, space, flags)

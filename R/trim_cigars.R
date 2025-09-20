@@ -15,10 +15,12 @@
                       "the same length as 'cigars'"))
         npos <- rep.int(npos, length(cigars))
     }
-    if (anyNA(npos))
-        stop(wmsg("'", what, "' cannot contain NAs"))
-    if (suppressWarnings(min(npos)) < 0L)
-        stop(wmsg("'", what, "' cannot contain negative values"))
+    if (length(npos) != 0L) {
+        if (anyNA(npos))
+            stop(wmsg("'", what, "' cannot contain NAs"))
+        if (min(npos) < 0L)
+            stop(wmsg("'", what, "' cannot contain negative values"))
+    }
     npos
 }
 

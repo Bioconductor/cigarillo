@@ -172,8 +172,9 @@ static SEXP make_list_of_IRanges(const IntPairAEAE *range_buf, SEXP names)
 								range_buf));
 	//SEXP ans_names = PROTECT(duplicate(names));
 	//SET_NAMES(ans, ans_names);
+	//UNPROTECT(2);
 	SET_NAMES(ans, names);
-	UNPROTECT(2);
+	UNPROTECT(1);
 	return ans;
 }
 
