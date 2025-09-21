@@ -7,15 +7,15 @@
 \alias{cigar_extent_along_pwa}
 
 \title{
-  Calculate the number of positions spanned by a CIGAR
+  Calculate the number of positions spanned by a CIGAR string
 }
 
 \description{
-  The \emph{extent} (or length) of a pairwise alignment is the number of
-  positions that it spans. Note that positions can be counted with respect
-  to the "reference space", "query space", or "pairwise alignment space".
+  The \emph{extent} (or length) of an alignment is the number of positions
+  that it spans. Note that positions can be counted with respect to
+  the "reference space", "query space", or "pairwise alignment space".
   This means that the \emph{extent} of a pairwise alignment depends on the
-  space that we're using to count positions.
+  space that we use to count positions.
 
   The \emph{extent} of a CIGAR string is simply the \emph{extent} of the
   alignment that it describes.

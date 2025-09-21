@@ -252,7 +252,7 @@ SEXP C_cigars_as_ranges(SEXP cigars, SEXP space,
 		flags_p = INTEGER(flags);
 	_init_ops_lkup_table(ops);
 	int space0 = INTEGER(space)[0];
-	int pos_len = LENGTH(lmmpos);
+	int lmmpos_len = LENGTH(lmmpos);
 	const int *lmmpos_p = INTEGER(lmmpos);
 	int f_is_NULL = f == R_NilValue;
 
@@ -338,7 +338,7 @@ SEXP C_cigars_as_ranges(SEXP cigars, SEXP space,
 for_tail:
 		if (flags != R_NilValue)
 			flags_p++;
-		if (pos_len != 1)
+		if (lmmpos_len != 1)
 			lmmpos_p++;
 		if (f_is_NULL) {
 			*(breakpoints++) = IntPairAE_get_nelt(range_buf1);

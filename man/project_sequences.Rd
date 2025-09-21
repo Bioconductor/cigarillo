@@ -6,10 +6,10 @@
 \title{Project sequences from one space to the other}
 
 \description{
-  \code{project_sequences} can project sequences that belong to a given
-  space (e.g. the "query space") onto another space (e.g. the
-  "reference space") by removing/injecting substrings from/into them,
-  based on the associated CIGAR strings.
+  \code{project_sequences} projects sequences that belong to a given
+  \emph{projection space} (e.g. the "query space") onto another
+  \emph{projection space} (e.g. the "reference space") by removing/injecting
+  substrings from/into them, based on their corresponding CIGAR string.
 
   Its primary use case is to project the read sequences stored in a
   BAM file (which are considered to belong to the "query space") onto
@@ -51,6 +51,9 @@ project_sequences(x, cigars, from="query", to="reference",
 }
 
 \details{
+  See \code{?\link{cigar_ops_visibility}} for the 8 supported
+  \emph{projection spaces}.
+
   \code{project_sequences} projects a sequence that belongs to one space
   onto another by (1) removing the substrings associated with operations
   that are no longer \emph{visible} in the new space, and (2) injecting

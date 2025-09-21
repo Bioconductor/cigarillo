@@ -144,16 +144,17 @@ int _to_query(int ref_pos, const char *cig, int lmmpos, Rboolean narrow_left)
 SEXP C_query_pos_as_ref_pos(SEXP query_pos, SEXP cigars, SEXP lmmpos,
 			    SEXP narrow_left)
 {
-	int npos, i;
-	SEXP ref_pos;
-
-	npos = LENGTH(query_pos);
-	PROTECT(ref_pos = allocVector(INTSXP, npos));
-	for (i = 0; i < npos; i++) {
+	int npos = LENGTH(query_pos);
+	SEXP ref_pos = PROTECT(allocVector(INTSXP, npos));
+	int lmmpos_len = LENGTH(lmmpos);
+	const int *lmmpos_p = INTEGER(lmmpos);
+	for (int i = 0; i < npos; i++) {
 		const char *cig_i = CHAR(STRING_ELT(cigars, i));
 		INTEGER(ref_pos)[i] = _to_ref(INTEGER(query_pos)[i],
-					      cig_i, INTEGER(lmmpos)[i],
+					      cig_i, *lmmpos_p,
 					      asLogical(narrow_left));
+		if (lmmpos_len != 1)
+			lmmpos_p++;
 	}
 
 	UNPROTECT(1);
@@ -175,16 +176,17 @@ SEXP C_query_pos_as_ref_pos(SEXP query_pos, SEXP cigars, SEXP lmmpos,
 SEXP C_ref_pos_as_query_pos(SEXP ref_pos, SEXP cigars, SEXP lmmpos,
 			    SEXP narrow_left)
 {
-	int npos, i;
-	SEXP query_pos;
-
-	npos = LENGTH(ref_pos);
-	PROTECT(query_pos = allocVector(INTSXP, npos));
-	for (i = 0; i < npos; i++) {
+	int npos = LENGTH(ref_pos);
+	SEXP query_pos = PROTECT(allocVector(INTSXP, npos));
+	int lmmpos_len = LENGTH(lmmpos);
+	const int *lmmpos_p = INTEGER(lmmpos);
+	for (int i = 0; i < npos; i++) {
 		const char *cig_i = CHAR(STRING_ELT(cigars, i));
 		INTEGER(query_pos)[i] = _to_query(INTEGER(ref_pos)[i],
-						  cig_i, INTEGER(lmmpos)[i],
+						  cig_i, *lmmpos_p,
 						  asLogical(narrow_left));
+		if (lmmpos_len != 1)
+			lmmpos_p++;
 	}
 
 	UNPROTECT(1);

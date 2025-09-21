@@ -6,7 +6,7 @@
 \title{Visibility of CIGAR operations}
 
 \description{
-  CIGAR operations and their visibility in various "projection spaces".
+  CIGAR operations and their visibility in various \emph{projection spaces}.
 }
 
 \usage{
@@ -23,9 +23,10 @@ cigar_ops_visibility(ops=CIGAR_OPS)
 }
 
 \details{
-  The 8 supported spaces are: "reference", "reference-N-regions-removed",
-  "query", "query-before-hard-clipping", "query-after-soft-clipping",
-  "pairwise", "pairwise-N-regions-removed", and "pairwise-dense".
+  The 8 supported \emph{projection spaces} are: "reference",
+  "reference-N-regions-removed", "query", "query-before-hard-clipping",
+  "query-after-soft-clipping", "pairwise", "pairwise-N-regions-removed",
+  and "pairwise-dense".
 
   Each space can be characterized by the extended CIGAR
   operations that are \emph{visible} in it. A CIGAR operation is
@@ -57,6 +58,7 @@ cigar_ops_visibility(ops=CIGAR_OPS)
 
     \item pairwise-dense: M, =, X
   }
+  Note that CIGAR operations M, =, and X are visible in all spaces.
 }
 
 \value{

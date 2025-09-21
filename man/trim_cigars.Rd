@@ -7,7 +7,7 @@
 \alias{narrow_cigars_along_ref}
 \alias{narrow_cigars_along_query}
 
-\title{Trim CIGAR strings along reference or query space}
+\title{Trim CIGAR strings along the reference or query space}
 
 \description{
   The CIGAR string associated with a pairwise alignment describes
@@ -76,9 +76,9 @@ narrow_cigars_along_query(cigars, start=NA, end=NA, width=NA)
   the "trimmed CIGAR strings".
 
   In addition the vector has an "rshift" attribute which is an integer
-  vector of the same length as \code{cigars}. It contains the values that
-  would need to be added to the POS field of a SAM/BAM file as a
-  consequence of this trimming.
+  vector of the same length as \code{cigars}. It contains the values
+  that would need to be added to the POS field (1-based leftmost mapping
+  POSition) of a SAM/BAM file as a consequence of this trimming.
 }
 
 \author{Hervé Pagès}

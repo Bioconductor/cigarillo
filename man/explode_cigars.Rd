@@ -88,9 +88,18 @@ cigars_as_RleList(cigars)
 }
 
 \examples{
-## Turn CIGAR strings into other useful representations:
-my_cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S",
-               "2S10M2000N15M", "3H33M5H")
+## ---------------------------------------------------------------------
+## Turn CIGAR strings into other useful representations
+## ---------------------------------------------------------------------
+
+my_cigars <- c(
+    "40M2I9M",
+    "60M",
+    "3H15M55N4M2I6M2D5M6S",
+    "50=2X3=1X10=",
+    "2S10M2000N15M",
+    "3H33M5H"
+)
 
 cig_ops <- explode_cigar_ops(my_cigars)
 cig_ops
@@ -104,12 +113,18 @@ explode_cigar_oplens(my_cigars, ops=c("I", "S"))
 cigs_as_rlelist <- cigars_as_RleList(my_cigars)
 cigs_as_rlelist
 
-## Results can be coerced to CharacterList or IntegerList:
+## ---------------------------------------------------------------------
+## Results can be coerced to CharacterList or IntegerList
+## ---------------------------------------------------------------------
+
 as(cig_ops, "CharacterList")
 as(cig_oplens, "IntegerList")
 as(cigs_as_rlelist, "CharacterList")
 
-## Sanity checks:
+## ---------------------------------------------------------------------
+## Sanity checks
+## ---------------------------------------------------------------------
+
 stopifnot(
     identical(as.list(runValue(cigs_as_rlelist)), cig_ops),
     identical(as.list(runLength(cigs_as_rlelist)), cig_oplens)
