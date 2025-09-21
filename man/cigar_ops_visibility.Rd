@@ -75,8 +75,8 @@ cigar_ops_visibility(ops=CIGAR_OPS)
 
 \seealso{
   \itemize{
-    \item \link{inspect_cigars} for basic utility functions to parse
-          and inspect CIGAR strings.
+    \item \link{explode_cigars} to extract the letters (or lengths) of
+          the CIGAR operations contained in a vector of CIGAR strings.
 
     \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
            operations in a vector of CIGAR strings.

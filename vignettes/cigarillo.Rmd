@@ -85,7 +85,7 @@ gal <- readGAlignments(bamfile, param=param)
 gal
 ```
 
-See `?inspect_cigars` for more information.
+See `?explode_cigars` for more information.
 
 
 # Session information

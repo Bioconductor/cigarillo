@@ -1,7 +1,7 @@
 #include "cigar_extent.h"
 
 #include "cigar_ops_visibility.h"
-#include "inspect_cigars.h"
+#include "explode_cigars.h"
 
 
 static const char *compute_cigar_extent(const char *cigar_string, int space,

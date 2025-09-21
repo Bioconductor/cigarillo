@@ -13,7 +13,7 @@ export(
     CIGAR_OPS,
     cigar_ops_visibility,
 
-    ## inspect-cigars.R:
+    ## explode_cigars.R:
     validate_cigars,
     explode_cigar_ops, explode_cigar_oplens,
     cigars_as_RleList,

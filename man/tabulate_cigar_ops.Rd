@@ -35,8 +35,8 @@ tabulate_cigar_ops(cigars, oplens.as.weights=FALSE)
     \item \code{\link{cigar_ops_visibility}} for an introduction to CIGAR
           operations and their visibility in various "projection spaces".
 
-    \item \link{inspect_cigars} for basic utility functions to parse
-          and inspect CIGAR strings.
+    \item \link{explode_cigars} to extract the letters (or lengths) of
+          the CIGAR operations contained in a vector of CIGAR strings.
 
     \item \link{cigar_extent} for functions that calculate the \emph{extent}
           of a CIGAR string, that is, the number of positions spanned by

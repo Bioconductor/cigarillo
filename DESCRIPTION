@@ -36,7 +36,7 @@ VignetteBuilder: knitr
 Collate:
 	utils.R
 	cigar_ops_visibility.R
-	inspect-cigars.R
+	explode_cigars.R
 	tabulate_cigar_ops.R
 	cigar_extent.R
 	trim_cigars.R

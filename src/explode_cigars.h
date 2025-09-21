@@ -1,5 +1,5 @@
-#ifndef _INSPECT_CIGARS_H_
-#define _INSPECT_CIGARS_H_
+#ifndef _EXPLODE_CIGARS_H_
+#define _EXPLODE_CIGARS_H_
 
 #include <Rdefines.h>
 
@@ -38,5 +38,5 @@ SEXP C_explode_cigar_oplens(
 	SEXP ops
 );
 
-#endif  /* _INSPECT_CIGARS_H_ */
+#endif  /* _EXPLODE_CIGARS_H_ */
 

@@ -129,8 +129,8 @@ cigar_extent_along_pwa(cigars,
     \item \code{\link{cigar_ops_visibility}} for an introduction to CIGAR
           operations and their visibility in various "projection spaces".
 
-    \item \link{inspect_cigars} for basic utility functions to parse
-          and inspect CIGAR strings.
+    \item \link{explode_cigars} to extract the letters (or lengths) of
+          the CIGAR operations contained in a vector of CIGAR strings.
 
     \item \code{\link{tabulate_cigar_ops}} to count the occurences of CIGAR
            operations in a vector of CIGAR strings.

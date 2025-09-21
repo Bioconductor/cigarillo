@@ -4,7 +4,7 @@
 #include "S4Vectors_interface.h"
 
 #include "cigar_ops_visibility.h"
-#include "inspect_cigars.h"
+#include "explode_cigars.h"
 
 #include <string.h>  /* for memcpy() */
 

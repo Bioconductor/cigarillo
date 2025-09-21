@@ -1,6 +1,6 @@
 #include "tabulate_cigar_ops.h"
 
-#include "inspect_cigars.h"
+#include "explode_cigars.h"
 
 #include <string.h>  /* for memset() */
 

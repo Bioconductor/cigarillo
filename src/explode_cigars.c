@@ -1,4 +1,4 @@
-#include "inspect_cigars.h"
+#include "explode_cigars.h"
 
 #include "S4Vectors_interface.h"
 

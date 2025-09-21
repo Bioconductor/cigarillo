@@ -1,7 +1,6 @@
-\name{inspect-cigars}
+\name{explode_cigars}
 
-\alias{inspect-cigars}
-\alias{inspect_cigars}
+\alias{explode_cigars}
 
 \alias{validate_cigars}
 
@@ -9,10 +8,12 @@
 \alias{explode_cigar_oplens}
 \alias{cigars_as_RleList}
 
-\title{Inspect CIGAR strings}
+\title{Explode CIGAR strings}
 
 \description{
-  Basic utility functions to parse and inspect CIGAR strings.
+  Use \code{explode_cigar_ops()} (or \code{explode_cigar_oplens()}) to
+  extract the letters (or lengths) of the CIGAR operations contained
+  in a vector of CIGAR strings.
 }
 
 \usage{
@@ -39,16 +40,18 @@ cigars_as_RleList(cigars)
 
 \value{
   For \code{explode_cigar_ops} and \code{explode_cigar_oplens}:
-  Both functions return a list of the same length as \code{cigars} where
-  each list element is a character vector (for \code{explode_cigar_ops})
+  Both functions return a list parallel to \code{cigars} where each
+  list element is a character vector (for \code{explode_cigar_ops})
   or an integer vector (for \code{explode_cigar_oplens}). The two lists
   are guaranteed to have the same shape, that is, the same \code{length()}
   and same \code{lengths()}.
-  The i-th character vector in the list returned by \code{explode_cigar_ops}
-  contains one single-letter string per CIGAR operation in \code{cigars[i]}.
-  The i-th integer vector in the list returned by \code{explode_cigar_oplens}
-  contains the corresponding CIGAR operation lengths. Operations not listed
-  in \code{ops} and 0-length operations are ignored.
+
+  More precisely: The i-th character vector in the list returned by
+  \code{explode_cigar_ops} contains one single-letter string per CIGAR
+  operation in \code{cigars[i]}. The i-th integer vector in the list
+  returned by \code{explode_cigar_oplens} contains the corresponding
+  CIGAR operation lengths. Operations not listed in \code{ops} and 0-length
+  operations are ignored.
 
   For \code{cigars_as_RleList}: An \link[IRanges]{RleList} object.
 }
@@ -89,17 +92,28 @@ cigars_as_RleList(cigars)
 my_cigars <- c("40M2I9M", "3H15M55N4M2I6M2D5M6S",
                "2S10M2000N15M", "3H33M5H")
 
-explode_cigar_ops(my_cigars)
-explode_cigar_oplens(my_cigars)
+cig_ops <- explode_cigar_ops(my_cigars)
+cig_ops
+
+cig_oplens <- explode_cigar_oplens(my_cigars)
+cig_oplens
 
 explode_cigar_ops(my_cigars, ops=c("I", "S"))
 explode_cigar_oplens(my_cigars, ops=c("I", "S"))
 
-cigars_as_RleList(my_cigars)
+cigs_as_rlelist <- cigars_as_RleList(my_cigars)
+cigs_as_rlelist
 
-## Note that the RleList object returned by cigars_as_RleList() can
-## be coerced to CharacterList:
-as(cigars_as_RleList(my_cigars), "CharacterList")
+## Results can be coerced to CharacterList or IntegerList:
+as(cig_ops, "CharacterList")
+as(cig_oplens, "IntegerList")
+as(cigs_as_rlelist, "CharacterList")
+
+## Sanity checks:
+stopifnot(
+    identical(as.list(runValue(cigs_as_rlelist)), cig_ops),
+    identical(as.list(runLength(cigs_as_rlelist)), cig_oplens)
+)
 }
 
 \keyword{manip}

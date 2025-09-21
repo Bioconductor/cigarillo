@@ -1,6 +1,6 @@
 #include "trim_cigars.h"
 
-#include "inspect_cigars.h"
+#include "explode_cigars.h"
 
 
 static char errmsg_buf[200];
