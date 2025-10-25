@@ -3,6 +3,8 @@
 #include "cigar_ops_visibility.h"
 #include "explode_cigars.h"
 
+#include <string.h>  /* for strcmp() */
+
 
 static const char *compute_cigar_extent(const char *cigar_string, int space,
 					int *extent)

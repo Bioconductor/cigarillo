@@ -2,7 +2,8 @@
 
 #include "S4Vectors_interface.h"
 
-#include <ctype.h> /* for isdigit() */
+#include <string.h>  /* for strcmp() */
+#include <ctype.h>   /* for isdigit() */
 
 
 static char errmsg_buf[200];
@@ -125,13 +126,13 @@ int _is_in_ops(char OP)
 
 static const char *parse_cigar(const char *cigar_string)
 {
-	int cigar_offset, n, OPL /* Operation Length */;
+	int cigar_offset = 0;
+	int n, OPL /* Operation Length */;
 	char OP /* Operation */;
-
-	cigar_offset = 0;
 	while ((n = _next_cigar_OP(cigar_string, cigar_offset, &OP, &OPL))) {
 		if (n == -1)
 			return _get_cigar_parsing_error();
+		cigar_offset += n;
 	}
 	return NULL;
 }
@@ -146,31 +147,29 @@ static const char *parse_cigar(const char *cigar_string)
           in 'cigars'. */
 SEXP C_validate_cigars(SEXP cigars, SEXP ans_type)
 {
-	SEXP ans;
-	int ncigars, ans_type0, i;
-	const char *cigar_string, *errmsg;
-	char string_buf[200];
+	static char string_buf[200];
 
-	ncigars = LENGTH(cigars);
-	ans_type0 = INTEGER(ans_type)[0];
+	int ncigars = LENGTH(cigars);
+	int ans_type0 = INTEGER(ans_type)[0];
+	SEXP ans;
 	if (ans_type0 == 1)
 		PROTECT(ans = NEW_LOGICAL(ncigars));
 	else
 		ans = R_NilValue;
-	for (i = 0; i < ncigars; i++) {
+	for (int i = 0; i < ncigars; i++) {
 		SEXP cigars_elt = STRING_ELT(cigars, i);
 		if (cigars_elt == NA_STRING) {
 			if (ans_type0 == 1)
 				LOGICAL(ans)[i] = 1;
 			continue;
 		}
-		cigar_string = CHAR(cigars_elt);
+		const char *cigar_string = CHAR(cigars_elt);
 		if (strcmp(cigar_string, "*") == 0) {
 			if (ans_type0 == 1)
 				LOGICAL(ans)[i] = 1;
 			continue;
 		}
-		errmsg = parse_cigar(cigar_string);
+		const char *errmsg = parse_cigar(cigar_string);
 		if (ans_type0 == 1) {
 			LOGICAL(ans)[i] = errmsg == NULL;
 			continue;

@@ -6,7 +6,7 @@
 #include "cigar_ops_visibility.h"
 #include "explode_cigars.h"
 
-#include <string.h>  /* for memcpy() */
+#include <string.h>  /* for memcpy(), strcmp() */
 
 
 /* TODO: This should go in the IRanges package and be exposed
