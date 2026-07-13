@@ -244,7 +244,7 @@ rseq2 <- project_sequences(rseq, cigar(gal),
 stopifnot(identical(elementNROWS(qseq2), elementNROWS(rseq2)))
 
 ## A closer look at reads with insertions and deletions:
-cigar_op_table <- cigarOpTable(cigar(gal))
+cigar_op_table <- tabulate_cigar_ops(cigar(gal))
 head(cigar_op_table)
 
 I_idx <- which(cigar_op_table[ , "I"] >= 2)  # at least 2 insertions
