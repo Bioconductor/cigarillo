@@ -72,8 +72,8 @@ project_sequences(x, cigars, from="query", to="reference",
 }
 
 \value{
-  An \link{XStringSet} derivative of the same class as input object
-  \code{x}, and parallel to \code{x}. The names on \code{x}, if any,
+  An \link[Biostrings]{XStringSet} derivative of the same class as input
+  object \code{x}, and parallel to \code{x}. The names on \code{x}, if any,
   are propagated.
 }
 
